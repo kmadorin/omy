@@ -5,3 +5,4 @@ psycopg2
 python-dotenv  
 langchain
 jupyter
+langchain-openai

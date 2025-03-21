@@ -9,7 +9,7 @@
 .ai
 
 # Node
-node_modules
+**/node_modules
 
 # Python
 __pycache__

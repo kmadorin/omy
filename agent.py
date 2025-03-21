@@ -31,11 +31,12 @@ class QueryOutput(TypedDict):
 def write_query(state: State):
     """Generate SQL query to fetch information."""
     query_prompt_template = hub.pull("langchain-ai/sql-query-system-prompt")
+
     prompt = query_prompt_template.invoke(
         {
             "dialect": db.dialect,
-            "top_k": 10,
-            "table_info": db.get_table_info(),
+            "top_k": 100,
+            "table_info": db.get_table_info(table_names=["YieldOpportunity"]),
             "input": state["question"],
         }
     )
@@ -46,7 +47,50 @@ def write_query(state: State):
 def execute_query(state: State):
     """Execute SQL query."""
     execute_query_tool = QuerySQLDatabaseTool(db=db)
-    return {"result": execute_query_tool.invoke(state["query"])}
+    result = execute_query_tool.invoke(state["query"])
+
+    
+    
+    print("query", state["query"])  # Debug print
+    
+    # Convert tuple results to dictionary with column names
+    if isinstance(result, str):
+        # Handle the string result that contains tuple data
+        try:
+            # Strip any whitespace and newlines, then evaluate the string as Python literal
+            result_data = eval(result.strip())
+            if not result_data:  # If empty result
+                return {"result": []}
+        except Exception as e:
+            print(f"Error parsing result: {e}")
+            return {"result": result}
+    
+    # Extract column names from the query
+    query = state["query"].lower()
+    select_part = query[query.find("select") + 6:query.find("from")].strip()
+    
+    # Handle column names with potential aliases
+    columns = []
+    for col in select_part.split(","):
+        col = col.strip()
+        # Check for alias with 'as' keyword
+        if " as " in col:
+            columns.append(col.split(" as ")[-1].strip())
+        # Check for simple alias without 'as'
+        elif " " in col and "(" not in col:
+            columns.append(col.split()[-1].strip())
+        # Handle function calls or simple columns
+        else:
+            # Remove any table prefixes (e.g., "table.column" -> "column")
+            columns.append(col.split(".")[-1].strip())
+    
+    print("Extracted columns:", columns)  # Debug print
+    
+    # Convert each row tuple to a dictionary
+    json_result = [dict(zip(columns, row)) for row in result_data]
+    print("Final JSON result:", json_result)  # Debug print
+    
+    return {"result": json_result}
 
 def generate_answer(state: State):
     """Answer question using retrieved information as context."""
@@ -90,7 +134,7 @@ graph = create_agent()
 
 if __name__ == "__main__":
     # Example usage
-    question = "Show top 5 yield options for USDC"
+    question = "Show top 5 yield options for USDC on ethereum. Show all columns except rewardType, isAvailable, canEnter, canExit, updatedAt, createdAt"
     answer = query_database(question)
     print("\nQuestion:", question)
     print("\nAnswer:", answer) 
