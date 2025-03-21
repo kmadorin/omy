@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+
+# AI files
+.ai
+
+# Node
+node_modules
+
+# Python
+__pycache__
