@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 24 100% 50%; /* Orange background */
+  --foreground: 222 47% 11%;
+
+  --card: 48 33% 94%; /* Cream background */
+  --card-foreground: 222 47% 11%;
+
+  --popover: 48 33% 94%;
+  --popover-foreground: 222 47% 11%;
+
+  --primary: 24 100% 50%; /* Orange */
+  --primary-foreground: 222 47% 11%;
+
+  --secondary: 217 76% 56%; /* Blue */
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 48 96% 53%; /* Yellow */
+  --accent-foreground: 222 47% 11%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222 47% 11%;
+
+  --radius: 0.5rem;
+
+  /* Additional custom colors */
+  --highlight-blue: 217 76% 56%;
+  --highlight-pink: 330 100% 76%;
+  --highlight-yellow: 48 96% 53%;
+  --highlight-orange: 24 100% 50%;
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-family: "Archivo", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Archivo Black", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+}
+
+.retro-shadow {
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
