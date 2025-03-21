@@ -16,3 +16,6 @@ __pycache__
 
 # Jupyter
 .ipynb_checkpoints/
+
+# LangGraph Studio files
+.langgraph_api/

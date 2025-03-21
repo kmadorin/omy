@@ -63,8 +63,11 @@ def generate_answer(state: State):
 def create_agent():
     """Create and return the SQL agent graph."""
     # Create graph
+    # graph_builder = StateGraph(State).add_sequence(
+    #     [write_query, execute_query, generate_answer]
+    # )
     graph_builder = StateGraph(State).add_sequence(
-        [write_query, execute_query, generate_answer]
+        [write_query, execute_query]
     )
     graph_builder.add_edge(START, "write_query")
     return graph_builder.compile()
@@ -78,10 +81,12 @@ def query_database(question: str):
         {"question": question}, 
         stream_mode="updates"
     ):
-        if "generate_answer" in step:
-            return step["generate_answer"]["answer"]
+        if "execute_query" in step:
+            return step["execute_query"]["result"]
     
     return "Failed to generate an answer."
+
+graph = create_agent()
 
 if __name__ == "__main__":
     # Example usage

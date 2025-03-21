@@ -4,4 +4,4 @@ langgraph
 psycopg2 
 python-dotenv  
 langchain
-jupyte
+jupyter
