@@ -1,9 +1,11 @@
 import { Client } from "@langchain/langgraph-sdk";
 
-const client = new Client({ apiUrl: "http://localhost:2024" });
-
+// Create client on demand to avoid initialization issues in Next.js
 export async function queryLangGraph(question: string) {
   try {
+    // Initialize the client inside the function for server component usage
+    const client = new Client({ apiUrl: "http://localhost:2024" });
+    
     const results = [];
     const streamResponse = client.runs.stream(
       null, // Threadless run

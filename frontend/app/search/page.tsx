@@ -3,30 +3,21 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { getSearchResults } from "@/lib/search-service"
-import { unstable_cache } from 'next/cache'
 
-// Enable dynamic rendering since we're using searchParams
+// Force dynamic rendering to ensure searchParams are available
 export const dynamic = 'force-dynamic'
-
-// Cache search results with a 5-minute revalidation time
-const getCachedSearchResults = unstable_cache(
-  async (query: string) => {
-    return getSearchResults(query)
-  },
-  ['search-results'],
-  { revalidate: 300 } // 5 minutes
-)
 
 export default async function SearchPage({
   searchParams,
 }: {
   searchParams: { q?: string }
 }) {
-  // Await searchParams before using it
-  const query = (await Promise.resolve(searchParams.q)) || ""
+  // Use await to access searchParams properties
+  const searchParamsData = await searchParams
+  const query = typeof searchParamsData.q === 'string' ? searchParamsData.q : ''
   
-  // Use cached results
-  const results = await getCachedSearchResults(query)
+  // Fetch results directly without caching
+  const results = await getSearchResults(query)
 
   return (
     <div className="flex min-h-screen flex-col bg-orange">
