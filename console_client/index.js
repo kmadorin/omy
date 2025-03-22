@@ -9,7 +9,7 @@ const streamResponse = client.runs.stream(
     "agent", // Assistant ID
     {
         input: {
-            "question": "Show top 5 yield options for USDC on ethereum. Show all columns except rewardType, isAvailable, canEnter, canExit, updatedAt, createdAt"
+            "question": "Show me the top 10 yields for USDC. Show all columns except rewardType, isAvailable, canEnter, canExit, updatedAt, createdAt"
         },
         streamMode: "updates",
     }
