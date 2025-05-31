@@ -1,5 +1,5 @@
-import Link from "next/link"
-import ConnectWallet from "@/components/connect-wallet"
+import Link from "next/link";
+import ConnectWallet from "@/components/connect-wallet";
 export function Header() {
   return (
     <header className="container mx-auto py-4">
@@ -10,5 +10,5 @@ export function Header() {
         <ConnectWallet />
       </div>
     </header>
-  )
-} 
+  );
+}

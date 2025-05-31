@@ -1,14 +1,18 @@
-import { useAccount, useDisconnect } from 'wagmi'
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { useAccount, useDisconnect } from "wagmi";
+import { Button } from "@/components/ui/button";
+import { useCallback } from "react";
 
 export function Account() {
-  const { address } = useAccount()
-  const { disconnect } = useDisconnect()
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
 
   const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`
-  }
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
+  const handleDisconnect = useCallback(() => {
+    disconnect();
+  }, [disconnect]);
 
   return (
     <div className="flex items-center gap-4">
@@ -17,13 +21,9 @@ export function Account() {
           {formatAddress(address)}
         </div>
       )}
-      <Button 
-        variant="destructive" 
-        size="sm" 
-        onClick={() => disconnect()}
-      >
+      <Button variant="destructive" size="sm" onClick={handleDisconnect}>
         Disconnect
       </Button>
     </div>
-  )
+  );
 }

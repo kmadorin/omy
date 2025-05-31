@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { cookieToInitialState } from "wagmi";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Providers } from "@/components/providers";
+import { getConfig } from "../wagmiConfig";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,22 +22,28 @@ export const metadata: Metadata = {
   description: "Find the best yields for your crypto assets",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const config = getConfig();
+  const headersList = await headers();
+  const initialState = cookieToInitialState(config, headersList.get("cookie"));
+
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers>
-          <div className="flex min-h-screen flex-col bg-orange">
-            <Header />
-            <main className="container mx-auto flex-1 py-6">
-              {children}
-            </main>
-          </div>
-        </Providers>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <div className="min-h-screen bg-orange-500 flex flex-col">
+          <Providers initialState={initialState}>
+            <div className="flex min-h-screen flex-col bg-orange">
+              <Header />
+              <main className="container mx-auto flex-1 py-6">{children}</main>
+            </div>
+          </Providers>
+        </div>
       </body>
     </html>
   );
