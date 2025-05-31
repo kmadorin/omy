@@ -13,16 +13,16 @@ export default function Home() {
       <div className="mt-8 flex flex-col items-center">
         <p className="text-navy mb-2">Try these examples:</p>
         <div className="flex flex-wrap gap-2 justify-center">
-          <Link href="/search?q=Show me top 5 yields for ETH on ethereum">
+          <Link href="/search?q=Show me top 5 yields for ETH on ethereum network">
             <Button
               variant="outline"
               className="bg-blue text-navy border-2 border-navy hover:bg-blue/90 font-medium retro-shadow"
               type="button"
             >
-              Show me top 5 yields for ETH on ethereum <ArrowRight className="ml-1 h-4 w-4" />
+              Show me top 5 yields for ETH token on ethereum <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>
-          <Link href="/search?q=Show me top 10 yields on stablecoins">
+          <Link href="/search?q=Show me top 10 yields on USDT and USDC">
             <Button
               variant="outline"
               className="bg-orange text-navy border-2 border-navy hover:bg-orange/90 font-medium retro-shadow"
