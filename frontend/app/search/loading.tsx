@@ -4,18 +4,7 @@ import Link from "next/link"
 
 export default function Loading() {
   return (
-    <div className="flex min-h-screen flex-col bg-orange">
-      <header className="container mx-auto py-4">
-        <div className="flex items-center justify-between">
-          <Link href="/">
-            <h1 className="text-2xl font-black text-navy">OhMyYield</h1>
-          </Link>
-          <Button className="bg-cream text-navy font-bold border-2 border-navy retro-shadow hover:bg-cream/90">
-            Connect Wallet
-          </Button>
-        </div>
-      </header>
-      
+    <div className="flex min-h-screen flex-col bg-orange">      
       <main className="container mx-auto flex-1 py-6">
         <div className="mb-6">
           <Link href="/">
