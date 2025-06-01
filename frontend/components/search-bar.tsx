@@ -1,51 +1,33 @@
-import { useState, useRef, useEffect } from "react";
-import { Search, Send } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-interface SearchBarProps {
-  onSearch: (query: string) => void;
-  isSearching: boolean;
-}
-
-const SearchBar = ({ onSearch, isSearching }: SearchBarProps) => {
-  const [query, setQuery] = useState("");
+const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState("");
+  const router = useRouter();
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim() && !isSearching) {
-      onSearch(query.trim());
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query)}`);
     }
   };
 
-  // Example queries for DeFi yield search
-  const exampleQueries = [
-    "Show me the top 10 yields for USDT",
-    "What are the highest APY opportunities with TVL over 1 million?",
-    "Compare ETH and BTC yield opportunities",
-    "Find stablecoin yields sorted by APY",
-  ];
-
-  const handleExampleClick = (example: string) => {
-    setQuery(example);
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+  const handleFocus = () => {
+    setIsFocused(true);
   };
 
-  // Auto-focus the input on component mount
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full">
       <form
-        onSubmit={handleSearch}
+        onSubmit={handleSubmit}
         className={cn(
           "w-full relative transition-all duration-300 ease-in-out",
           isFocused ? "scale-105" : "scale-100",
@@ -66,51 +48,26 @@ const SearchBar = ({ onSearch, isSearching }: SearchBarProps) => {
             )}
           />
           <input
-            ref={inputRef}
             type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
             placeholder="Search for DeFi yield opportunities..."
             className="w-full py-4 px-3 text-base text-gray-900 bg-transparent outline-none"
-            disabled={isSearching}
+            value={query}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={(e) => setQuery(e.target.value)}
           />
           <Button
             type="submit"
-            size="icon"
-            disabled={!query.trim() || isSearching}
-            className={cn(
-              "h-10 w-10 mr-2 rounded-lg transition-all",
-              query.trim() && !isSearching
-                ? "bg-orange-500 hover:bg-orange-600 border border-gray-900"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed",
-            )}
+            size="lg"
+            disabled={!query.trim()}
+            className="mr-2 rounded-lg transition-all bg-orange-500 hover:bg-orange-600 border border-gray-900"
             aria-label="Search"
           >
-            <Send
-              size={18}
-              className={
-                query.trim() && !isSearching ? "text-white" : "text-gray-500"
-              }
-            />
+            <Sparkles className="h-4 w-4" />
+            Search
           </Button>
         </div>
       </form>
-
-      {/* Example queries */}
-      <div className="mt-4 flex flex-wrap gap-2 justify-center">
-        {exampleQueries.map((example, index) => (
-          <button
-            key={index}
-            onClick={() => handleExampleClick(example)}
-            className="text-xs px-3 py-1.5 bg-orange-100 hover:bg-orange-200 rounded-full text-orange-700 border border-orange-300 transition-colors"
-            disabled={isSearching}
-          >
-            {example}
-          </button>
-        ))}
-      </div>
     </div>
   );
 };

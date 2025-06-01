@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Connector, useConnect } from "wagmi";
 import { Button } from "@/components/ui/button";
+import { Wallet } from "lucide-react";
 
 export function WalletOptions() {
   const { connectors, connect } = useConnect();
@@ -48,9 +49,9 @@ function WalletOption({
   return (
     <Button
       onClick={handleClick}
-      className="bg-cream text-navy font-bold border-2 border-navy retro-shadow hover:bg-cream/90"
+      className="bg-white text-gray-900 hover:bg-gray-100 font-semibold border border-gray-900 shadow-md"
     >
-      Connect Wallet
+      <Wallet className="mr-2 h-4 w-4" /> Connect Wallet
       {/* Connect with {connector.name} */}
     </Button>
   );

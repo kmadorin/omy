@@ -5,7 +5,9 @@ export function Header() {
     <header className="container mx-auto py-4">
       <div className="flex items-center justify-between">
         <Link href="/">
-          <h1 className="text-2xl font-black text-navy">OhMyYield</h1>
+          <span className="text-2xl font-bold text-gray-900 uppercase">
+            OhMyYield
+          </span>
         </Link>
         <ConnectWallet />
       </div>

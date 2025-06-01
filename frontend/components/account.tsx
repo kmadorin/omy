@@ -17,11 +17,15 @@ export function Account() {
   return (
     <div className="flex items-center gap-4">
       {address && (
-        <div className="rounded-lg bg-secondary px-3 py-1 text-sm font-medium text-secondary-foreground">
+        <div className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-900">
           {formatAddress(address)}
         </div>
       )}
-      <Button variant="destructive" size="sm" onClick={handleDisconnect}>
+      <Button
+        className="bg-white text-gray-900 hover:bg-gray-100 font-semibold border border-gray-900 shadow-md"
+        size="sm"
+        onClick={handleDisconnect}
+      >
         Disconnect
       </Button>
     </div>
