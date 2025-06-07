@@ -4,8 +4,10 @@ import { cookieToInitialState } from "wagmi";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
-import { Providers } from "@/components/providers";
+import { Providers } from "@/providers/providers";
 import { getConfig } from "../wagmiConfig";
+import { Toaster } from "@/components/ui/toaster";
+import getStakeKitApiClient from "@/lib/stakekit-service";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +42,7 @@ export default async function RootLayout({
           <Providers initialState={initialState}>
             <Header />
             <main className="container mx-auto flex-1 py-6">{children}</main>
+            <Toaster />
           </Providers>
         </div>
       </body>

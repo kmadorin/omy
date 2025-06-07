@@ -19,17 +19,6 @@ export default function Error({
 
   return (
     <main className="container mx-auto flex-1 py-6">
-      <div className="mb-6">
-        <Link href="/">
-          <Button
-            variant="ghost"
-            className="text-navy hover:text-navy/80 pl-0 font-medium"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
-          </Button>
-        </Link>
-      </div>
-
       <div className="bg-cream rounded-xl border-2 border-navy p-6 retro-shadow mb-6">
         <div className="max-w-4xl mx-auto text-center py-8">
           <h2 className="text-2xl font-black text-navy mb-4">

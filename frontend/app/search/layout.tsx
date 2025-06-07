@@ -1,8 +1,9 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export default async function SearchLayout({
+export default function SearchLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

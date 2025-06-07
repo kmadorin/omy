@@ -1,7 +1,4 @@
 import { YieldResults } from "@/components/yield-results";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { getSearchResults } from "@/lib/search-service-supabase";
 
 // Force dynamic rendering to ensure searchParams are available

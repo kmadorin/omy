@@ -17,6 +17,7 @@ export interface YieldData {
 }
 
 export interface YieldResult {
+  id: string;
   token_network: string;
   token_symbol: string;
   protocol: string;
