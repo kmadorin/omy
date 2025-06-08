@@ -11,15 +11,7 @@ import { useAccount, useSendTransaction } from "wagmi";
 import { InvestmentModal } from "@/components/investment-modal";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { parseEther } from "viem";
-import {
-  useActionEnter,
-  useTransactionConstruct,
-  AddressesDto,
-  ActionArgumentsDto,
-  ConstructTransactionRequestDto,
-  TransactionDto,
-} from "@stakekit/api-hooks";
+import { useActionEnter, useTransactionConstruct } from "@stakekit/api-hooks";
 
 const getChainColor = (chain: string) => {
   switch (chain.toLowerCase()) {
@@ -44,20 +36,20 @@ const getChainColor = (chain: string) => {
 
 export function YieldCard({ yieldItem }: { yieldItem: YieldResult }) {
   const { toast } = useToast();
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
   const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
 
-  const {
-    data: actionResponse,
-    isPending: isLoadingActionData,
-    error: actionDataError,
-    mutate: createActionEnter,
-  } = useActionEnter();
+  // const {
+  //   data: actionResponse,
+  //   isPending: isLoadingActionData,
+  //   error: actionDataError,
+  //   mutate: createActionEnter,
+  // } = useActionEnter();
 
-  const { data: txHash, sendTransaction } = useSendTransaction();
+  // const { data: txHash, sendTransaction } = useSendTransaction();
 
-  const { data: createTransactionResponse, mutate: createTransaction } =
-    useTransactionConstruct();
+  // const { data: createTransactionResponse, mutate: createTransaction } =
+  //   useTransactionConstruct();
 
   const handleInvestClick = () => {
     if (!isConnected) {
@@ -71,16 +63,16 @@ export function YieldCard({ yieldItem }: { yieldItem: YieldResult }) {
 
     setIsInvestmentModalOpen(true);
 
-    if (!isConnected || !address) return;
-    const action = createActionEnter({
-      data: {
-        integrationId: yieldItem.id,
-        addresses: { address },
-        args: { amount: "0.00001" },
-      },
-    });
+    // if (!isConnected || !address) return;
+    // const action = createActionEnter({
+    //   data: {
+    //     integrationId: yieldItem.id,
+    //     addresses: { address },
+    //     args: { amount: "0.00001" },
+    //   },
+    // });
 
-    console.log(`action: `, action);
+    // console.log(`action: `, action);
 
     // if (action && action.transactions) {
     //   for (tx of action.transactions) {
@@ -94,70 +86,68 @@ export function YieldCard({ yieldItem }: { yieldItem: YieldResult }) {
     //   }
     // }
 
-    console.log(`createActionEnter: `, createActionEnter);
-    console.log(`actionDataError: ${JSON.stringify(actionDataError, null, 2)}`);
-    console.log(`isLoadingActionData: ${isLoadingActionData}`);
+    //   console.log(`createActionEnter: `, createActionEnter);
+    //   console.log(`actionDataError: ${JSON.stringify(actionDataError, null, 2)}`);
+    //   console.log(`isLoadingActionData: ${isLoadingActionData}`);
   };
 
-  useEffect(() => {
-    if (actionResponse) {
-      const transactions = actionResponse.transactions;
+  // useEffect(() => {
+  //   if (actionResponse) {
+  //     const transactions = actionResponse.transactions;
 
-      for (const tx of transactions) {
-        const txData = createTransaction({ transactionId: tx.id, data: {} });
-        console.log(`txData: ${JSON.stringify(txData, null, 2)}`);
-      }
-    }
-  }, [actionResponse]);
+  //     for (const tx of transactions) {
+  //       const txData = createTransaction({ transactionId: tx.id, data: {} });
+  //       console.log(`txData: ${JSON.stringify(txData, null, 2)}`);
+  //     }
+  //   }
+  // }, [actionResponse]);
 
-  useEffect(() => {
-    console.log(
-      `createTransactionResponse: ${JSON.stringify(createTransactionResponse, null, 2)}`,
-    );
+  // useEffect(() => {
+  //   console.log(
+  //     `createTransactionResponse: ${JSON.stringify(createTransactionResponse, null, 2)}`,
+  //   );
 
-    if (
-      createTransactionResponse &&
-      createTransactionResponse?.unsignedTransaction
-    ) {
-      try {
-        // const transaction = JSON.parse(
-        //   createTransactionResponse?.unsignedTransaction,
-        // );
-        //
-        const transaction = {
-          from: "0x9e0f0d83dD880240e3506A7Ac4CE82500b2bD92B",
-          gasLimit: "0x0e1398",
-          value: "10000000000000",
-          to: "0x74a09653A083691711cF8215a6ab074BB4e99ef5",
-          data: "0x5358fbda000000000000000000000000c23287cdc37938079dbda6954b7edf755b17ae72",
-          nonce: 251,
-          type: 2,
-          maxFeePerGas: "0xfb881700",
-          maxPriorityFeePerGas: "0x054e0840",
-          chainId: 1,
-        };
+  //   if (
+  //     createTransactionResponse &&
+  //     createTransactionResponse?.unsignedTransaction
+  //   ) {
+  //     try {
+  // const transaction = JSON.parse(
+  //   createTransactionResponse?.unsignedTransaction,
+  // );
+  //
+  // const transaction = {
+  //   from: "0x9e0f0d83dD880240e3506A7Ac4CE82500b2bD92B",
+  //   gasLimit: "0x0e1398",
+  //   value: "10000000000000",
+  //   to: "0x74a09653A083691711cF8215a6ab074BB4e99ef5",
+  //   data: "0x5358fbda000000000000000000000000c23287cdc37938079dbda6954b7edf755b17ae72",
+  //   nonce: 251,
+  //   type: 2,
+  //   maxFeePerGas: "0xfb881700",
+  //   maxPriorityFeePerGas: "0x054e0840",
+  //   chainId: 1,
+  // };
+  // if (!transaction) return;
+  // sendTransaction({
+  //   value: BigInt(transaction.value),
+  //   to: transaction.to as `0x${string}`,
+  //   data: transaction.data as `0x${string}`,
+  // });
+  //     } catch (e) {
+  //       console.log(`e: ${e}`);
+  //     }
+  //     console.log(
+  //       `unsignedTransaction: ${createTransactionResponse?.unsignedTransaction}`,
+  //     );
+  //   }
+  // }, [createTransactionResponse]);
 
-        if (!transaction) return;
-
-        sendTransaction({
-          value: BigInt(transaction.value),
-          to: transaction.to as `0x${string}`,
-          data: transaction.data as `0x${string}`,
-        });
-      } catch (e) {
-        console.log(`e: ${e}`);
-      }
-      console.log(
-        `unsignedTransaction: ${createTransactionResponse?.unsignedTransaction}`,
-      );
-    }
-  }, [createTransactionResponse]);
-
-  useEffect(() => {
-    if (txHash) {
-      console.log(`txHash: ${txHash}`);
-    }
-  }, [txHash]);
+  // useEffect(() => {
+  //   if (txHash) {
+  //     console.log(`txHash: ${txHash}`);
+  //   }
+  // }, [txHash]);
 
   return (
     <>
@@ -200,23 +190,13 @@ export function YieldCard({ yieldItem }: { yieldItem: YieldResult }) {
               >
                 Invest Now <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button
-                onClick={() =>
-                  sendTransaction({
-                    to: "0x9e0f0d83dD880240e3506A7Ac4CE82500b2bD92B",
-                    value: parseEther("0.00001"),
-                  })
-                }
-              >
-                Send Transaction
-              </Button>
             </div>
           </div>
         </CardContent>
       </Card>
       <InvestmentModal
         isOpen={isInvestmentModalOpen}
-        onClose={() => setIsInvestmentModalOpen(false)}
+        handleClose={() => setIsInvestmentModalOpen(false)}
         yieldOption={yieldItem}
       />
     </>

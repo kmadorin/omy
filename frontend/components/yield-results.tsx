@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import type { YieldResult } from "@/lib/types";
 import { YieldCard } from "@/components/yield-card";
-import { useActionEnter } from "@stakekit/api-hooks";
 
 interface YieldResultsProps {
   query: string;
