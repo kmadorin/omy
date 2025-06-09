@@ -1,17 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { YieldResult } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { formatAPY } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useAccount, useSendTransaction } from "wagmi";
+import { useAccount } from "wagmi";
 import { InvestmentModal } from "@/components/investment-modal";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useActionEnter, useTransactionConstruct } from "@stakekit/api-hooks";
 
 const getChainColor = (chain: string) => {
   switch (chain.toLowerCase()) {

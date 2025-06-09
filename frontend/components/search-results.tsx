@@ -39,7 +39,7 @@ const SearchResults = ({ isSearching, query }: SearchResultsProps) => {
             </div>
           </div>
           <p className="text-gray-700">
-            Searching for yield opportunities that match your query: "{query}"
+            Searching for yield opportunities that match your query: &quot;{query}&quot;
           </p>
           <div className="text-sm text-gray-500 pt-2 border-t border-gray-200">
             <p>Your results will appear here soon.</p>

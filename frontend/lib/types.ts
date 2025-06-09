@@ -27,5 +27,5 @@ export interface YieldResult {
   provider_name: string;
   apy: number;
   tvl: number;
-  [key: string]: any;
+  [key: string]: string | number | null;
 }

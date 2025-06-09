@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { useEffect } from "react";
 
 export default function Error({
@@ -25,7 +23,7 @@ export default function Error({
             Something went wrong!
           </h2>
           <p className="text-navy/70 mb-6">
-            Sorry, we couldn't load the search results.
+            Sorry, we couldn&apos;t load the search results.
           </p>
           <Button
             onClick={reset}

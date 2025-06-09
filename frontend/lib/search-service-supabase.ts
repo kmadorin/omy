@@ -1,8 +1,9 @@
 import type { YieldResult } from "./types";
-import { supabase } from "@/integrations/supabase/client";
+// import { supabase } from "@/integrations/supabase/client";
 
 // Server-side search function optimized for server components
 export async function getSearchResults(query: string): Promise<YieldResult[]> {
+  console.log(`query: ${query}`);
   try {
     // if (!query.trim()) {
     //   return [];

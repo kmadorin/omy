@@ -7,7 +7,6 @@ import { Header } from "@/components/header";
 import { Providers } from "@/providers/providers";
 import { getConfig } from "../wagmiConfig";
 import { Toaster } from "@/components/ui/toaster";
-import getStakeKitApiClient from "@/lib/stakekit-service";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

@@ -92,7 +92,7 @@ export function InvestmentModal({
   const [transactions, setTransactions] = useState<TransactionStatus[]>([]);
   const [isSwitchingChain, setIsSwitchingChain] = useState(false);
 
-  const { chains, switchChain } = useSwitchChain();
+  const { switchChain } = useSwitchChain();
   const currentChainId = useChainId();
 
   // Get the transaction sender hook and public client for blockchain interactions
