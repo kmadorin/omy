@@ -1,3 +1,5 @@
+import type { Networks } from "@stakekit/api-hooks";
+
 export interface YieldData {
   id: string;
   name: string;
@@ -18,8 +20,9 @@ export interface YieldData {
 
 export interface YieldResult {
   id: string;
-  token_network: string;
+  token_network: keyof typeof Networks;
   token_symbol: string;
+  token_address: string | null;
   protocol: string;
   provider_name: string;
   apy: number;

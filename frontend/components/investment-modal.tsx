@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect, useCallback } from "react";
-import { ArrowRightIcon, InfoIcon, LoaderIcon } from "lucide-react";
+import { useState, useCallback, useMemo } from "react";
+import { ArrowRightIcon, LoaderIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,14 +18,22 @@ import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { formatPercentage } from "@/lib/utils";
 import type { YieldResult } from "@/lib/types";
+import chainsMap from "@/lib/chains-map";
 import {
   useAccount,
   useSendTransaction,
-  useWaitForTransactionReceipt,
   usePublicClient,
+  useSwitchChain,
+  useChainId,
 } from "wagmi";
+
 // Import the direct function calls instead of hooks
-import { actionEnter, transactionConstruct } from "@stakekit/api-hooks";
+import {
+  actionEnter,
+  transactionConstruct,
+  useTokenGetTokenBalances,
+  Networks,
+} from "@stakekit/api-hooks";
 
 // Types for transaction handling
 interface TransactionResponse {
@@ -60,21 +68,55 @@ export function InvestmentModal({
   const [totalTxCount, setTotalTxCount] = useState(0);
   const [progressMessage, setProgressMessage] = useState("");
   const [transactions, setTransactions] = useState<TransactionStatus[]>([]);
+  const [isSwitchingChain, setIsSwitchingChain] = useState(false);
+
+  const { chains, switchChain } = useSwitchChain();
+  const currentChainId = useChainId();
 
   // Get the transaction sender hook and public client for blockchain interactions
   const { sendTransactionAsync } = useSendTransaction();
   const publicClient = usePublicClient();
 
+  // Memoize the balance request configuration
+  const balanceRequest = useMemo(
+    () => ({
+      addresses: address
+        ? [
+            {
+              address: address,
+              network: Networks[yieldOption.token_network],
+              tokenAddress: yieldOption.token_address || undefined,
+            },
+          ]
+        : [],
+    }),
+    [address, yieldOption.token_network, yieldOption.token_address],
+  );
+
+  // Fetch token balance using StakeKit with memoized dependencies
+  const balanceQuery = useTokenGetTokenBalances(balanceRequest, {
+    query: {
+      enabled: !!address && isOpen,
+      refetchOnWindowFocus: false,
+      staleTime: 30000, // 30 seconds
+      // Only refetch when important dependencies change
+      refetchOnMount: false,
+    },
+  });
+
   // Calculate derived values from transactions
   const confirmedCount = transactions.filter((tx) => tx.confirmed).length;
   const totalTxs = transactions.length;
 
-  // In a real app, this would be fetched from the blockchain
-  const walletBalance = {
-    [yieldOption.token_symbol]: 1, // Mock balance
-  };
+  // Get required chain ID for this yield option
+  const requiredChainId = chainsMap[yieldOption.token_network];
+  const needsChainSwitch = currentChainId !== requiredChainId;
 
-  const maxAmount = walletBalance[yieldOption.token_symbol] || 0;
+  // Get balance from StakeKit API
+  const tokenBalance = balanceQuery.data?.find(
+    (balance) => balance.token.symbol === yieldOption.token_symbol,
+  );
+  const maxAmount = tokenBalance ? parseFloat(tokenBalance.amount) : 0;
 
   const handlePercentageChange = (value: number[]) => {
     const newPercentage = value[0];
@@ -239,6 +281,35 @@ export function InvestmentModal({
     [sendTransactionAsync, toast, waitForTransaction],
   );
 
+  // Handle chain switching
+  const handleSwitchChain = useCallback(async () => {
+    if (!requiredChainId) {
+      toast({
+        title: "Unsupported network",
+        description: `Network ${yieldOption.token_network} is not supported`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSwitchingChain(true);
+    try {
+      switchChain({ chainId: requiredChainId });
+      toast({
+        title: "Chain switched",
+        description: `Successfully switched to ${yieldOption.token_network}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Chain switch failed",
+        description: error instanceof Error ? error.message : "Failed to switch chain",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSwitchingChain(false);
+    }
+  }, [requiredChainId, switchChain, toast, yieldOption.token_network]);
+
   // Handle the main investment flow
   const handleInvest = useCallback(async () => {
     // Validate wallet connection
@@ -259,6 +330,12 @@ export function InvestmentModal({
         description: "Please enter a valid amount to invest",
         variant: "destructive",
       });
+      return;
+    }
+
+    // Check if chain switch is needed
+    if (needsChainSwitch) {
+      await handleSwitchChain();
       return;
     }
 
@@ -310,8 +387,10 @@ export function InvestmentModal({
     processTransactions,
     toast,
     yieldOption.id,
-    yieldOption.name,
+    yieldOption.provider_name,
     yieldOption.token_symbol,
+    handleSwitchChain,
+    needsChainSwitch,
   ]);
 
   // Calculate estimated earnings
@@ -333,7 +412,13 @@ export function InvestmentModal({
           <div className="flex items-center justify-between">
             <Label>Available Balance</Label>
             <span className="font-medium">
-              {maxAmount} {yieldOption.token_symbol}
+              {balanceQuery.isLoading ? (
+                <LoaderIcon className="h-4 w-4 animate-spin inline" />
+              ) : balanceQuery.isError ? (
+                "Error loading"
+              ) : (
+                `${maxAmount.toFixed(6)} ${yieldOption.token_symbol}`
+              )}
             </span>
           </div>
 
@@ -417,9 +502,25 @@ export function InvestmentModal({
           </Button>
           <Button
             onClick={handleInvest}
-            disabled={isInvesting || !amount || Number.parseFloat(amount) <= 0}
+            disabled={
+              isInvesting ||
+              isSwitchingChain ||
+              !amount ||
+              Number.parseFloat(amount) <= 0 ||
+              balanceQuery.isLoading
+            }
           >
-            {isInvesting ? (
+            {isSwitchingChain ? (
+              <>
+                <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                Switching Chain...
+              </>
+            ) : needsChainSwitch ? (
+              <>
+                Switch to {yieldOption.token_network}
+                <ArrowRightIcon className="ml-2 h-4 w-4" />
+              </>
+            ) : isInvesting ? (
               <>
                 <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
                 <span className="truncate max-w-48">
