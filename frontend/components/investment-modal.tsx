@@ -3,11 +3,33 @@
 import type React from "react";
 import { useState, useCallback, useMemo } from "react";
 import { ArrowRightIcon, LoaderIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
+const getChainColor = (chain: string) => {
+  switch (chain.toLowerCase()) {
+    case "ethereum":
+      return "bg-blue/20 text-navy border-blue";
+    case "polygon":
+      return "bg-orange/20 text-navy border-orange";
+    case "avalanche":
+      return "bg-orange/20 text-navy border-orange";
+    case "solana":
+      return "bg-blue/20 text-navy border-blue";
+    case "arbitrum":
+      return "bg-blue/20 text-navy border-blue";
+    case "optimism":
+      return "bg-orange/20 text-navy border-orange";
+    case "base":
+      return "bg-blue/20 text-navy border-blue";
+    default:
+      return "bg-navy/10 text-navy border-navy";
+  }
+};
+
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -302,7 +324,8 @@ export function InvestmentModal({
     } catch (error) {
       toast({
         title: "Chain switch failed",
-        description: error instanceof Error ? error.message : "Failed to switch chain",
+        description:
+          error instanceof Error ? error.message : "Failed to switch chain",
         variant: "destructive",
       });
     } finally {
@@ -399,104 +422,138 @@ export function InvestmentModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Invest</DialogTitle>
-          <DialogDescription>
-            {yieldOption.provider_name} •{" "}
-            {formatPercentage(yieldOption.apy * 100)} APY
-          </DialogDescription>
+      <DialogContent className="sm:max-w-lg bg-cream-100 border-2 border-gray-900 rounded-xl shadow-lg">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-bold text-gray-900">
+            Invest in {yieldOption.token_symbol}
+          </DialogTitle>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-yellow-300 flex items-center justify-center border-2 border-gray-900">
+              <span className="font-bold text-gray-900">
+                {yieldOption.token_symbol.substring(0, 1)}
+              </span>
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <div className="font-bold text-lg text-gray-900">
+                  {yieldOption.provider_name}
+                </div>
+                <Badge
+                  variant="outline"
+                  className={`${getChainColor(yieldOption.token_network)} bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full border border-blue-300`}
+                >
+                  {yieldOption.token_network}
+                </Badge>
+              </div>
+              <div className="text-xl font-bold text-orange-500">
+                {formatPercentage(yieldOption.apy * 100)} APY
+              </div>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="flex items-center justify-between">
-            <Label>Available Balance</Label>
-            <span className="font-medium">
-              {balanceQuery.isLoading ? (
-                <LoaderIcon className="h-4 w-4 animate-spin inline" />
-              ) : balanceQuery.isError ? (
-                "Error loading"
-              ) : (
-                `${maxAmount.toFixed(6)} ${yieldOption.token_symbol}`
-              )}
-            </span>
+        <div className="grid gap-6 py-6">
+          <div className="bg-white rounded-lg p-4 border-2 border-gray-900 shadow-sm">
+            <div className="flex items-center justify-between">
+              <Label className="text-gray-900 font-medium">
+                Available Balance
+              </Label>
+              <span className="font-bold text-gray-900">
+                {balanceQuery.isLoading ? (
+                  <LoaderIcon className="h-4 w-4 animate-spin inline" />
+                ) : balanceQuery.isError ? (
+                  <span className="text-red-600">Error loading</span>
+                ) : (
+                  `${maxAmount.toFixed(6)} ${yieldOption.token_symbol}`
+                )}
+              </span>
+            </div>
           </div>
 
-          <div className="grid gap-2">
+          <div className="bg-white rounded-lg p-4 border-2 border-gray-900 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
-              <Label htmlFor="amount">Investment Amount</Label>
+              <Label htmlFor="amount" className="text-gray-900 font-medium">
+                Investment Amount
+              </Label>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleMaxClick}
-                className="h-6 text-xs"
+                className="h-7 text-xs bg-orange-100 border-orange-300 text-orange-800 hover:bg-orange-200 font-medium"
               >
                 MAX
               </Button>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Input
                 id="amount"
                 type="text"
                 value={amount}
                 onChange={handleAmountChange}
                 placeholder="0.00"
+                className="text-lg font-medium border-2 border-gray-900 rounded-lg focus:border-orange-500"
               />
-              <span className="font-medium min-w-16 text-right">
+              <span className="font-bold min-w-16 text-right text-gray-900 text-lg">
                 {yieldOption.token_symbol}
               </span>
             </div>
           </div>
 
-          <div className="grid gap-2">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>0%</span>
-              <span>50%</span>
-              <span>100%</span>
+          <div className="bg-white rounded-lg p-4 border-2 border-gray-900 shadow-sm space-y-3">
+            <Label className="text-gray-900 font-medium">
+              Percentage of Balance
+            </Label>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm font-medium text-gray-700">
+                <span>0%</span>
+                <span>50%</span>
+                <span>100%</span>
+              </div>
+              <Slider
+                value={[percentage]}
+                max={100}
+                step={1}
+                onValueChange={handlePercentageChange}
+                className="w-full"
+              />
+              <div className="text-center">
+                <span className="inline-block bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium border border-orange-300">
+                  {percentage.toFixed(0)}% of balance
+                </span>
+              </div>
             </div>
-            <Slider
-              value={[percentage]}
-              max={100}
-              step={1}
-              onValueChange={handlePercentageChange}
-            />
           </div>
 
-          <div className="rounded-md bg-muted p-3 space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">
-                Estimated Yearly Yield
-              </span>
-              <span className="font-medium">
-                {estimatedYearlyEarnings.toFixed(4)} {yieldOption.token_symbol}
-              </span>
+          <div className="bg-cream-200 rounded-lg p-4 border-2 border-gray-900 shadow-sm space-y-3">
+            <h3 className="font-bold text-gray-900 text-lg">
+              Investment Summary
+            </h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700 font-medium">
+                  Estimated Yearly Yield
+                </span>
+                <span className="font-bold text-gray-900">
+                  {estimatedYearlyEarnings.toFixed(4)}{" "}
+                  {yieldOption.token_symbol}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700 font-medium">APY</span>
+                <span className="font-bold text-orange-500 text-lg">
+                  {formatPercentage(yieldOption.apy * 100)}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">APY</span>
-              <span className="font-medium">
-                {formatPercentage(yieldOption.apy * 100)}
-              </span>
-            </div>
-            {/* <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Gas Fee (estimated)</span>
-              <span className="font-medium">~$5.00</span>
-            </div> */}
           </div>
-
-          {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <InfoIcon className="h-4 w-4" />
-            <p>
-              Your investment will be automatically added to your portfolio
-              after the transaction is confirmed.
-            </p>
-          </div> */}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex gap-3 pt-6">
           <Button
             variant="outline"
             onClick={handleClose}
             disabled={isInvesting}
+            className="flex-1 border-2 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-medium"
           >
             Cancel
           </Button>
@@ -509,6 +566,7 @@ export function InvestmentModal({
               Number.parseFloat(amount) <= 0 ||
               balanceQuery.isLoading
             }
+            className="flex-1 bg-orange-500 hover:bg-orange-600 border-2 border-gray-900 text-white font-bold shadow-md"
           >
             {isSwitchingChain ? (
               <>
