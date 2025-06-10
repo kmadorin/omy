@@ -65,6 +65,8 @@ jobs:
         working-directory: ./frontend
         env:
           PAGES_BASE_PATH: ${{ steps.setup_pages.outputs.base_path }}
+          NEXT_PUBLIC_STAKEKIT_API_KEY: ${{ secrets.NEXT_PUBLIC_STAKEKIT_API_KEY }}
+          NEXT_PUBLIC_STAKEKIT_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_STAKEKIT_API_BASE_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
