@@ -4,13 +4,12 @@ import { YieldResults } from "@/components/yield-results";
 import { getSearchResults } from "@/lib/search-service-supabase";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
-type SearchResult = any; // Add proper type based on your results structure
+import type { YieldResult } from "@/lib/types";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<YieldResult[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
