@@ -8,7 +8,7 @@ import { getConfig } from "../wagmiConfig";
 
 type Props = {
   children: ReactNode;
-  initialState: State | undefined;
+  initialState?: State | undefined;
 };
 
 const STAKEKIT_API_KEY = process.env.NEXT_PUBLIC_STAKEKIT_API_KEY;
