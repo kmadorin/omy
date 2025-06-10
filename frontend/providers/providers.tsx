@@ -14,16 +14,15 @@ type Props = {
 const STAKEKIT_API_KEY = process.env.NEXT_PUBLIC_STAKEKIT_API_KEY;
 const STAKEKIT_API_BASE_URL = process.env.NEXT_PUBLIC_STAKEKIT_API_BASE_URL;
 
-if (!STAKEKIT_API_KEY || !STAKEKIT_API_BASE_URL) {
-  throw new Error(
-    "StakeKit API key and base URL must be set in environment variables",
-  );
+// Only configure StakeKit if environment variables are available
+if (STAKEKIT_API_KEY && STAKEKIT_API_BASE_URL) {
+  StakeKitApiClient.configure({
+    apiKey: STAKEKIT_API_KEY,
+    baseURL: STAKEKIT_API_BASE_URL,
+  });
+} else {
+  console.warn("StakeKit API credentials not found - StakeKit features will be disabled");
 }
-
-StakeKitApiClient.configure({
-  apiKey: STAKEKIT_API_KEY || "",
-  baseURL: STAKEKIT_API_BASE_URL,
-});
 
 export function Providers({ children, initialState }: Props) {
   const [config] = useState(() => getConfig());
