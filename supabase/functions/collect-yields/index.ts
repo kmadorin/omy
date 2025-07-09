@@ -1,5 +1,5 @@
-import { serve } from 'std/server'
-import { createClient } from '@supabase/supabase-js'
+import { serve } from 'https://deno.land/std@0.224.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 interface StakeKitYieldResponse {
   data: YieldData[]
@@ -38,7 +38,7 @@ interface YieldData {
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL')!,
-  Deno.env.get('SERVICE_ROLE_KEY')!
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 )
 
 async function fetchYields(apiKey: string, baseUrl: string, page: number): Promise<StakeKitYieldResponse> {
