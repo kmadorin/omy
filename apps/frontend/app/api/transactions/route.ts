@@ -12,7 +12,9 @@ const BodySchema = z.object({
   direction: z.enum(['ENTER', 'EXIT', 'CORRECTION']),
   amount: z.union([z.string(), z.number()]),
   txHash: z.string(),
-  executedAt: z.string()
+  executedAt: z.string(),
+  token_symbol: z.string(),
+  token_address: z.string().nullable(),
 });
 
 export async function POST(request: Request) {
@@ -32,7 +34,9 @@ export async function POST(request: Request) {
       direction: data.direction,
       amount,
       txHash: data.txHash,
-      executedAt: new Date(data.executedAt)
+      executedAt: new Date(data.executedAt),
+      token_symbol: data.token_symbol,
+      token_address: data.token_address,
     }
   });
 
