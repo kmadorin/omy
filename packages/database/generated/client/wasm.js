@@ -149,7 +149,6 @@ exports.Prisma.YieldOpportunityScalarFieldEnum = {
 
 exports.Prisma.PortfolioPositionScalarFieldEnum = {
   id: 'id',
-  yieldOpportunityId: 'yieldOpportunityId',
   amount: 'amount',
   entryDate: 'entryDate',
   lastModified: 'lastModified',
