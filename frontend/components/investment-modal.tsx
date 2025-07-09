@@ -5,6 +5,9 @@ import { useState, useCallback, useMemo } from "react";
 import { ArrowRightIcon, LoaderIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
+import { addOrUpdatePosition } from "@/lib/portfolio-utils";
+import type { PortfolioPosition } from "@/lib/portfolio-types";
 
 const getChainColor = (chain: string) => {
   switch (chain.toLowerCase()) {
@@ -82,6 +85,7 @@ export function InvestmentModal({
   yieldOption,
 }: InvestmentModalProps) {
   const { isConnected, address } = useAccount();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [amount, setAmount] = useState("");
   const [percentage, setPercentage] = useState(50);
@@ -203,7 +207,10 @@ export function InvestmentModal({
 
   // Process transactions sequentially with status tracking
   const processTransactions = useCallback(
-    async (txs: Array<{ id: string }>): Promise<string[]> => {
+    async (
+      txs: Array<{ id: string }>,
+      meta: { wallet: string; integrationId: string; yieldOpportunityId: string; amount: number }
+    ): Promise<string[]> => {
       const hashes: string[] = [];
       setTotalTxCount(txs.length);
       setTransactions([]);
@@ -270,6 +277,32 @@ export function InvestmentModal({
                 title: `Transaction confirmed`,
                 description: `Transaction ${i + 1}/${txs.length} has been confirmed`,
               });
+
+              await fetch('/api/transactions', {
+                method: 'POST',
+                body: JSON.stringify({
+                  walletAddress: meta.wallet,
+                  integrationId: meta.integrationId,
+                  yieldOpportunityId: meta.yieldOpportunityId,
+                  direction: 'ENTER',
+                  amount: meta.amount,
+                  txHash: hash,
+                  executedAt: new Date().toISOString()
+                })
+              })
+
+              queryClient.setQueryData(['portfolio', meta.wallet], (old: any) =>
+                addOrUpdatePosition(old as PortfolioPosition[], {
+                  wallet_address: meta.wallet,
+                  integration_id: meta.integrationId,
+                  yield_opportunity_id: meta.yieldOpportunityId,
+                  amount: meta.amount,
+                  usd_value: null,
+                  entry_date: new Date().toISOString(),
+                  apy: 0,
+                  last_balance_sync: new Date().toISOString()
+                })
+              )
             } else {
               throw new Error(
                 `Transaction failed with status: ${result.status}`,
@@ -300,7 +333,7 @@ export function InvestmentModal({
       setIsInvesting(false);
       return hashes;
     },
-    [sendTransactionAsync, toast, waitForTransaction],
+    [sendTransactionAsync, toast, waitForTransaction, queryClient],
   );
 
   // Handle chain switching
@@ -382,7 +415,12 @@ export function InvestmentModal({
       }
 
       // 2. Process all transactions
-      const successTxs = await processTransactions(actionResponse.transactions);
+      const successTxs = await processTransactions(actionResponse.transactions, {
+        wallet: address,
+        integrationId: yieldOption.id,
+        yieldOpportunityId: yieldOption.id,
+        amount: investAmount
+      });
 
       // 3. Check if all transactions succeeded
       if (successTxs.length === actionResponse.transactions.length) {
