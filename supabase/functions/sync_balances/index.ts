@@ -1,5 +1,5 @@
-import { serve } from 'std/server'
-import { createClient } from '@supabase/supabase-js'
+import { serve } from 'https://deno.land/std@0.224.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 interface Position {
   wallet_address: string
@@ -32,7 +32,7 @@ serve(async () => {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
 
     const { data: positions, error } = await supabase
-      .from('PortfolioPosition')
+      .from('portfolio_position')
       .select('wallet_address,integration_id,amount,token_symbol,yield_opportunity_id')
       .eq('is_active', true)
       .or(`last_balance_sync.is.null,last_balance_sync.lt.${oneHourAgo}`)
@@ -62,7 +62,7 @@ serve(async () => {
         const newAmount = BigInt(bal.amount)
         const oldAmount = BigInt(pos.amount)
         if (newAmount === oldAmount) {
-          await supabase.from('PortfolioPosition')
+          await supabase.from('portfolio_position')
             .update({ last_balance_sync: new Date().toISOString() })
             .match({ wallet_address: pos.wallet_address, integration_id: pos.integration_id })
           continue
@@ -83,7 +83,7 @@ serve(async () => {
         const price = priceCache[pos.token_symbol]
         const usdValue = price != null ? Number(price) * Number(diff) : null
 
-        await supabase.from('PortfolioTransaction').insert({
+        await supabase.from('portfolio_transaction').insert({
           wallet_address: pos.wallet_address,
           integration_id: pos.integration_id,
           yield_opportunity_id: pos.yield_opportunity_id,
@@ -94,7 +94,7 @@ serve(async () => {
           executed_at: new Date().toISOString()
         })
 
-        await supabase.from('PortfolioPosition')
+        await supabase.from('portfolio_position')
           .update({
             amount: newAmount.toString(),
             is_active: newAmount > 0n,
