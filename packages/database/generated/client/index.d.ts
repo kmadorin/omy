@@ -1114,36 +1114,6 @@ export namespace Prisma {
    */
 
 
-  /**
-   * Count Type YieldOpportunityCountOutputType
-   */
-
-  export type YieldOpportunityCountOutputType = {
-    PortfolioTransaction: number
-  }
-
-  export type YieldOpportunityCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    PortfolioTransaction?: boolean | YieldOpportunityCountOutputTypeCountPortfolioTransactionArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * YieldOpportunityCountOutputType without action
-   */
-  export type YieldOpportunityCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the YieldOpportunityCountOutputType
-     */
-    select?: YieldOpportunityCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * YieldOpportunityCountOutputType without action
-   */
-  export type YieldOpportunityCountOutputTypeCountPortfolioTransactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PortfolioTransactionWhereInput
-  }
-
 
   /**
    * Models
@@ -1499,8 +1469,6 @@ export namespace Prisma {
     isAvailable?: boolean
     rewardType?: boolean
     updatedAt?: boolean
-    PortfolioTransaction?: boolean | YieldOpportunity$PortfolioTransactionArgs<ExtArgs>
-    _count?: boolean | YieldOpportunityCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["yieldOpportunity"]>
 
   export type YieldOpportunitySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1553,17 +1521,10 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type YieldOpportunityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    PortfolioTransaction?: boolean | YieldOpportunity$PortfolioTransactionArgs<ExtArgs>
-    _count?: boolean | YieldOpportunityCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type YieldOpportunityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $YieldOpportunityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "YieldOpportunity"
-    objects: {
-      PortfolioTransaction: Prisma.$PortfolioTransactionPayload<ExtArgs>[]
-    }
+    objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
@@ -1951,7 +1912,6 @@ export namespace Prisma {
    */
   export interface Prisma__YieldOpportunityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    PortfolioTransaction<T extends YieldOpportunity$PortfolioTransactionArgs<ExtArgs> = {}>(args?: Subset<T, YieldOpportunity$PortfolioTransactionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortfolioTransactionPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2016,10 +1976,6 @@ export namespace Prisma {
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
-    /**
      * Filter, which YieldOpportunity to fetch.
      */
     where: YieldOpportunityWhereUniqueInput
@@ -2034,10 +1990,6 @@ export namespace Prisma {
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
-    /**
      * Filter, which YieldOpportunity to fetch.
      */
     where: YieldOpportunityWhereUniqueInput
@@ -2051,10 +2003,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the YieldOpportunity
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
     /**
      * Filter, which YieldOpportunity to fetch.
      */
@@ -2100,10 +2048,6 @@ export namespace Prisma {
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
-    /**
      * Filter, which YieldOpportunity to fetch.
      */
     where?: YieldOpportunityWhereInput
@@ -2148,10 +2092,6 @@ export namespace Prisma {
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
-    /**
      * Filter, which YieldOpportunities to fetch.
      */
     where?: YieldOpportunityWhereInput
@@ -2190,10 +2130,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the YieldOpportunity
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
     /**
      * The data needed to create a YieldOpportunity.
      */
@@ -2235,10 +2171,6 @@ export namespace Prisma {
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
-    /**
      * The data needed to update a YieldOpportunity.
      */
     data: XOR<YieldOpportunityUpdateInput, YieldOpportunityUncheckedUpdateInput>
@@ -2271,10 +2203,6 @@ export namespace Prisma {
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
-    /**
      * The filter to search for the YieldOpportunity to update in case it exists.
      */
     where: YieldOpportunityWhereUniqueInput
@@ -2297,10 +2225,6 @@ export namespace Prisma {
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
-    /**
      * Filter which YieldOpportunity to delete.
      */
     where: YieldOpportunityWhereUniqueInput
@@ -2317,26 +2241,6 @@ export namespace Prisma {
   }
 
   /**
-   * YieldOpportunity.PortfolioTransaction
-   */
-  export type YieldOpportunity$PortfolioTransactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PortfolioTransaction
-     */
-    select?: PortfolioTransactionSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
-    where?: PortfolioTransactionWhereInput
-    orderBy?: PortfolioTransactionOrderByWithRelationInput | PortfolioTransactionOrderByWithRelationInput[]
-    cursor?: PortfolioTransactionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: PortfolioTransactionScalarFieldEnum | PortfolioTransactionScalarFieldEnum[]
-  }
-
-  /**
    * YieldOpportunity without action
    */
   export type YieldOpportunityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2344,10 +2248,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the YieldOpportunity
      */
     select?: YieldOpportunitySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: YieldOpportunityInclude<ExtArgs> | null
   }
 
 
@@ -4365,22 +4265,18 @@ export namespace Prisma {
 
   export type PortfolioTransactionAvgAggregateOutputType = {
     amount: Decimal | null
-    usdValue: Decimal | null
   }
 
   export type PortfolioTransactionSumAggregateOutputType = {
     amount: Decimal | null
-    usdValue: Decimal | null
   }
 
   export type PortfolioTransactionMinAggregateOutputType = {
     id: string | null
     walletAddress: string | null
     integrationId: string | null
-    yieldOpportunityId: string | null
     direction: $Enums.PortfolioDirection | null
     amount: Decimal | null
-    usdValue: Decimal | null
     txHash: string | null
     executedAt: Date | null
   }
@@ -4389,10 +4285,8 @@ export namespace Prisma {
     id: string | null
     walletAddress: string | null
     integrationId: string | null
-    yieldOpportunityId: string | null
     direction: $Enums.PortfolioDirection | null
     amount: Decimal | null
-    usdValue: Decimal | null
     txHash: string | null
     executedAt: Date | null
   }
@@ -4401,10 +4295,8 @@ export namespace Prisma {
     id: number
     walletAddress: number
     integrationId: number
-    yieldOpportunityId: number
     direction: number
     amount: number
-    usdValue: number
     txHash: number
     executedAt: number
     _all: number
@@ -4413,22 +4305,18 @@ export namespace Prisma {
 
   export type PortfolioTransactionAvgAggregateInputType = {
     amount?: true
-    usdValue?: true
   }
 
   export type PortfolioTransactionSumAggregateInputType = {
     amount?: true
-    usdValue?: true
   }
 
   export type PortfolioTransactionMinAggregateInputType = {
     id?: true
     walletAddress?: true
     integrationId?: true
-    yieldOpportunityId?: true
     direction?: true
     amount?: true
-    usdValue?: true
     txHash?: true
     executedAt?: true
   }
@@ -4437,10 +4325,8 @@ export namespace Prisma {
     id?: true
     walletAddress?: true
     integrationId?: true
-    yieldOpportunityId?: true
     direction?: true
     amount?: true
-    usdValue?: true
     txHash?: true
     executedAt?: true
   }
@@ -4449,10 +4335,8 @@ export namespace Prisma {
     id?: true
     walletAddress?: true
     integrationId?: true
-    yieldOpportunityId?: true
     direction?: true
     amount?: true
-    usdValue?: true
     txHash?: true
     executedAt?: true
     _all?: true
@@ -4548,10 +4432,8 @@ export namespace Prisma {
     id: string
     walletAddress: string
     integrationId: string
-    yieldOpportunityId: string
     direction: $Enums.PortfolioDirection
     amount: Decimal
-    usdValue: Decimal | null
     txHash: string
     executedAt: Date
     _count: PortfolioTransactionCountAggregateOutputType | null
@@ -4579,60 +4461,42 @@ export namespace Prisma {
     id?: boolean
     walletAddress?: boolean
     integrationId?: boolean
-    yieldOpportunityId?: boolean
     direction?: boolean
     amount?: boolean
-    usdValue?: boolean
     txHash?: boolean
     executedAt?: boolean
-    yieldOpportunity?: boolean | YieldOpportunityDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["portfolioTransaction"]>
 
   export type PortfolioTransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     walletAddress?: boolean
     integrationId?: boolean
-    yieldOpportunityId?: boolean
     direction?: boolean
     amount?: boolean
-    usdValue?: boolean
     txHash?: boolean
     executedAt?: boolean
-    yieldOpportunity?: boolean | YieldOpportunityDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["portfolioTransaction"]>
 
   export type PortfolioTransactionSelectScalar = {
     id?: boolean
     walletAddress?: boolean
     integrationId?: boolean
-    yieldOpportunityId?: boolean
     direction?: boolean
     amount?: boolean
-    usdValue?: boolean
     txHash?: boolean
     executedAt?: boolean
   }
 
-  export type PortfolioTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    yieldOpportunity?: boolean | YieldOpportunityDefaultArgs<ExtArgs>
-  }
-  export type PortfolioTransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    yieldOpportunity?: boolean | YieldOpportunityDefaultArgs<ExtArgs>
-  }
 
   export type $PortfolioTransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "PortfolioTransaction"
-    objects: {
-      yieldOpportunity: Prisma.$YieldOpportunityPayload<ExtArgs>
-    }
+    objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
       walletAddress: string
       integrationId: string
-      yieldOpportunityId: string
       direction: $Enums.PortfolioDirection
       amount: Prisma.Decimal
-      usdValue: Prisma.Decimal | null
       txHash: string
       executedAt: Date
     }, ExtArgs["result"]["portfolioTransaction"]>
@@ -4999,7 +4863,6 @@ export namespace Prisma {
    */
   export interface Prisma__PortfolioTransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    yieldOpportunity<T extends YieldOpportunityDefaultArgs<ExtArgs> = {}>(args?: Subset<T, YieldOpportunityDefaultArgs<ExtArgs>>): Prisma__YieldOpportunityClient<$Result.GetResult<Prisma.$YieldOpportunityPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5032,10 +4895,8 @@ export namespace Prisma {
     readonly id: FieldRef<"PortfolioTransaction", 'String'>
     readonly walletAddress: FieldRef<"PortfolioTransaction", 'String'>
     readonly integrationId: FieldRef<"PortfolioTransaction", 'String'>
-    readonly yieldOpportunityId: FieldRef<"PortfolioTransaction", 'String'>
     readonly direction: FieldRef<"PortfolioTransaction", 'PortfolioDirection'>
     readonly amount: FieldRef<"PortfolioTransaction", 'Decimal'>
-    readonly usdValue: FieldRef<"PortfolioTransaction", 'Decimal'>
     readonly txHash: FieldRef<"PortfolioTransaction", 'String'>
     readonly executedAt: FieldRef<"PortfolioTransaction", 'DateTime'>
   }
@@ -5051,10 +4912,6 @@ export namespace Prisma {
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
-    /**
      * Filter, which PortfolioTransaction to fetch.
      */
     where: PortfolioTransactionWhereUniqueInput
@@ -5069,10 +4926,6 @@ export namespace Prisma {
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
-    /**
      * Filter, which PortfolioTransaction to fetch.
      */
     where: PortfolioTransactionWhereUniqueInput
@@ -5086,10 +4939,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the PortfolioTransaction
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
     /**
      * Filter, which PortfolioTransaction to fetch.
      */
@@ -5135,10 +4984,6 @@ export namespace Prisma {
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
-    /**
      * Filter, which PortfolioTransaction to fetch.
      */
     where?: PortfolioTransactionWhereInput
@@ -5183,10 +5028,6 @@ export namespace Prisma {
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
-    /**
      * Filter, which PortfolioTransactions to fetch.
      */
     where?: PortfolioTransactionWhereInput
@@ -5226,10 +5067,6 @@ export namespace Prisma {
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
-    /**
      * The data needed to create a PortfolioTransaction.
      */
     data: XOR<PortfolioTransactionCreateInput, PortfolioTransactionUncheckedCreateInput>
@@ -5259,10 +5096,6 @@ export namespace Prisma {
      */
     data: PortfolioTransactionCreateManyInput | PortfolioTransactionCreateManyInput[]
     skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5273,10 +5106,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the PortfolioTransaction
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
     /**
      * The data needed to update a PortfolioTransaction.
      */
@@ -5310,10 +5139,6 @@ export namespace Prisma {
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
-    /**
      * The filter to search for the PortfolioTransaction to update in case it exists.
      */
     where: PortfolioTransactionWhereUniqueInput
@@ -5335,10 +5160,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the PortfolioTransaction
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
     /**
      * Filter which PortfolioTransaction to delete.
      */
@@ -5363,10 +5184,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the PortfolioTransaction
      */
     select?: PortfolioTransactionSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PortfolioTransactionInclude<ExtArgs> | null
   }
 
 
@@ -5451,10 +5268,8 @@ export namespace Prisma {
     id: 'id',
     walletAddress: 'walletAddress',
     integrationId: 'integrationId',
-    yieldOpportunityId: 'yieldOpportunityId',
     direction: 'direction',
     amount: 'amount',
-    usdValue: 'usdValue',
     txHash: 'txHash',
     executedAt: 'executedAt'
   };
@@ -5611,7 +5426,6 @@ export namespace Prisma {
     isAvailable?: BoolFilter<"YieldOpportunity"> | boolean
     rewardType?: StringFilter<"YieldOpportunity"> | string
     updatedAt?: DateTimeFilter<"YieldOpportunity"> | Date | string
-    PortfolioTransaction?: PortfolioTransactionListRelationFilter
   }
 
   export type YieldOpportunityOrderByWithRelationInput = {
@@ -5637,7 +5451,6 @@ export namespace Prisma {
     isAvailable?: SortOrder
     rewardType?: SortOrder
     updatedAt?: SortOrder
-    PortfolioTransaction?: PortfolioTransactionOrderByRelationAggregateInput
   }
 
   export type YieldOpportunityWhereUniqueInput = Prisma.AtLeast<{
@@ -5666,7 +5479,6 @@ export namespace Prisma {
     isAvailable?: BoolFilter<"YieldOpportunity"> | boolean
     rewardType?: StringFilter<"YieldOpportunity"> | string
     updatedAt?: DateTimeFilter<"YieldOpportunity"> | Date | string
-    PortfolioTransaction?: PortfolioTransactionListRelationFilter
   }, "id">
 
   export type YieldOpportunityOrderByWithAggregationInput = {
@@ -5908,26 +5720,20 @@ export namespace Prisma {
     id?: StringFilter<"PortfolioTransaction"> | string
     walletAddress?: StringFilter<"PortfolioTransaction"> | string
     integrationId?: StringFilter<"PortfolioTransaction"> | string
-    yieldOpportunityId?: StringFilter<"PortfolioTransaction"> | string
     direction?: EnumPortfolioDirectionFilter<"PortfolioTransaction"> | $Enums.PortfolioDirection
     amount?: DecimalFilter<"PortfolioTransaction"> | Decimal | DecimalJsLike | number | string
-    usdValue?: DecimalNullableFilter<"PortfolioTransaction"> | Decimal | DecimalJsLike | number | string | null
     txHash?: StringFilter<"PortfolioTransaction"> | string
     executedAt?: DateTimeFilter<"PortfolioTransaction"> | Date | string
-    yieldOpportunity?: XOR<YieldOpportunityRelationFilter, YieldOpportunityWhereInput>
   }
 
   export type PortfolioTransactionOrderByWithRelationInput = {
     id?: SortOrder
     walletAddress?: SortOrder
     integrationId?: SortOrder
-    yieldOpportunityId?: SortOrder
     direction?: SortOrder
     amount?: SortOrder
-    usdValue?: SortOrderInput | SortOrder
     txHash?: SortOrder
     executedAt?: SortOrder
-    yieldOpportunity?: YieldOpportunityOrderByWithRelationInput
   }
 
   export type PortfolioTransactionWhereUniqueInput = Prisma.AtLeast<{
@@ -5938,22 +5744,17 @@ export namespace Prisma {
     NOT?: PortfolioTransactionWhereInput | PortfolioTransactionWhereInput[]
     walletAddress?: StringFilter<"PortfolioTransaction"> | string
     integrationId?: StringFilter<"PortfolioTransaction"> | string
-    yieldOpportunityId?: StringFilter<"PortfolioTransaction"> | string
     direction?: EnumPortfolioDirectionFilter<"PortfolioTransaction"> | $Enums.PortfolioDirection
     amount?: DecimalFilter<"PortfolioTransaction"> | Decimal | DecimalJsLike | number | string
-    usdValue?: DecimalNullableFilter<"PortfolioTransaction"> | Decimal | DecimalJsLike | number | string | null
     executedAt?: DateTimeFilter<"PortfolioTransaction"> | Date | string
-    yieldOpportunity?: XOR<YieldOpportunityRelationFilter, YieldOpportunityWhereInput>
   }, "id" | "txHash">
 
   export type PortfolioTransactionOrderByWithAggregationInput = {
     id?: SortOrder
     walletAddress?: SortOrder
     integrationId?: SortOrder
-    yieldOpportunityId?: SortOrder
     direction?: SortOrder
     amount?: SortOrder
-    usdValue?: SortOrderInput | SortOrder
     txHash?: SortOrder
     executedAt?: SortOrder
     _count?: PortfolioTransactionCountOrderByAggregateInput
@@ -5970,10 +5771,8 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"PortfolioTransaction"> | string
     walletAddress?: StringWithAggregatesFilter<"PortfolioTransaction"> | string
     integrationId?: StringWithAggregatesFilter<"PortfolioTransaction"> | string
-    yieldOpportunityId?: StringWithAggregatesFilter<"PortfolioTransaction"> | string
     direction?: EnumPortfolioDirectionWithAggregatesFilter<"PortfolioTransaction"> | $Enums.PortfolioDirection
     amount?: DecimalWithAggregatesFilter<"PortfolioTransaction"> | Decimal | DecimalJsLike | number | string
-    usdValue?: DecimalNullableWithAggregatesFilter<"PortfolioTransaction"> | Decimal | DecimalJsLike | number | string | null
     txHash?: StringWithAggregatesFilter<"PortfolioTransaction"> | string
     executedAt?: DateTimeWithAggregatesFilter<"PortfolioTransaction"> | Date | string
   }
@@ -6001,7 +5800,6 @@ export namespace Prisma {
     isAvailable?: boolean
     rewardType: string
     updatedAt: Date | string
-    PortfolioTransaction?: PortfolioTransactionCreateNestedManyWithoutYieldOpportunityInput
   }
 
   export type YieldOpportunityUncheckedCreateInput = {
@@ -6027,7 +5825,6 @@ export namespace Prisma {
     isAvailable?: boolean
     rewardType: string
     updatedAt: Date | string
-    PortfolioTransaction?: PortfolioTransactionUncheckedCreateNestedManyWithoutYieldOpportunityInput
   }
 
   export type YieldOpportunityUpdateInput = {
@@ -6053,7 +5850,6 @@ export namespace Prisma {
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     rewardType?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    PortfolioTransaction?: PortfolioTransactionUpdateManyWithoutYieldOpportunityNestedInput
   }
 
   export type YieldOpportunityUncheckedUpdateInput = {
@@ -6079,7 +5875,6 @@ export namespace Prisma {
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     rewardType?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    PortfolioTransaction?: PortfolioTransactionUncheckedUpdateManyWithoutYieldOpportunityNestedInput
   }
 
   export type YieldOpportunityCreateManyInput = {
@@ -6366,20 +6161,16 @@ export namespace Prisma {
     integrationId: string
     direction: $Enums.PortfolioDirection
     amount: Decimal | DecimalJsLike | number | string
-    usdValue?: Decimal | DecimalJsLike | number | string | null
     txHash: string
     executedAt: Date | string
-    yieldOpportunity: YieldOpportunityCreateNestedOneWithoutPortfolioTransactionInput
   }
 
   export type PortfolioTransactionUncheckedCreateInput = {
     id?: string
     walletAddress: string
     integrationId: string
-    yieldOpportunityId: string
     direction: $Enums.PortfolioDirection
     amount: Decimal | DecimalJsLike | number | string
-    usdValue?: Decimal | DecimalJsLike | number | string | null
     txHash: string
     executedAt: Date | string
   }
@@ -6390,20 +6181,16 @@ export namespace Prisma {
     integrationId?: StringFieldUpdateOperationsInput | string
     direction?: EnumPortfolioDirectionFieldUpdateOperationsInput | $Enums.PortfolioDirection
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    usdValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     txHash?: StringFieldUpdateOperationsInput | string
     executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    yieldOpportunity?: YieldOpportunityUpdateOneRequiredWithoutPortfolioTransactionNestedInput
   }
 
   export type PortfolioTransactionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     walletAddress?: StringFieldUpdateOperationsInput | string
     integrationId?: StringFieldUpdateOperationsInput | string
-    yieldOpportunityId?: StringFieldUpdateOperationsInput | string
     direction?: EnumPortfolioDirectionFieldUpdateOperationsInput | $Enums.PortfolioDirection
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    usdValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     txHash?: StringFieldUpdateOperationsInput | string
     executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6412,10 +6199,8 @@ export namespace Prisma {
     id?: string
     walletAddress: string
     integrationId: string
-    yieldOpportunityId: string
     direction: $Enums.PortfolioDirection
     amount: Decimal | DecimalJsLike | number | string
-    usdValue?: Decimal | DecimalJsLike | number | string | null
     txHash: string
     executedAt: Date | string
   }
@@ -6426,7 +6211,6 @@ export namespace Prisma {
     integrationId?: StringFieldUpdateOperationsInput | string
     direction?: EnumPortfolioDirectionFieldUpdateOperationsInput | $Enums.PortfolioDirection
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    usdValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     txHash?: StringFieldUpdateOperationsInput | string
     executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6435,10 +6219,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     walletAddress?: StringFieldUpdateOperationsInput | string
     integrationId?: StringFieldUpdateOperationsInput | string
-    yieldOpportunityId?: StringFieldUpdateOperationsInput | string
     direction?: EnumPortfolioDirectionFieldUpdateOperationsInput | $Enums.PortfolioDirection
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    usdValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     txHash?: StringFieldUpdateOperationsInput | string
     executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6511,19 +6293,9 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type PortfolioTransactionListRelationFilter = {
-    every?: PortfolioTransactionWhereInput
-    some?: PortfolioTransactionWhereInput
-    none?: PortfolioTransactionWhereInput
-  }
-
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
-  }
-
-  export type PortfolioTransactionOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type YieldOpportunityCountOrderByAggregateInput = {
@@ -6868,47 +6640,26 @@ export namespace Prisma {
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
   }
 
-  export type DecimalNullableFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-  }
-
-  export type YieldOpportunityRelationFilter = {
-    is?: YieldOpportunityWhereInput
-    isNot?: YieldOpportunityWhereInput
-  }
-
   export type PortfolioTransactionCountOrderByAggregateInput = {
     id?: SortOrder
     walletAddress?: SortOrder
     integrationId?: SortOrder
-    yieldOpportunityId?: SortOrder
     direction?: SortOrder
     amount?: SortOrder
-    usdValue?: SortOrder
     txHash?: SortOrder
     executedAt?: SortOrder
   }
 
   export type PortfolioTransactionAvgOrderByAggregateInput = {
     amount?: SortOrder
-    usdValue?: SortOrder
   }
 
   export type PortfolioTransactionMaxOrderByAggregateInput = {
     id?: SortOrder
     walletAddress?: SortOrder
     integrationId?: SortOrder
-    yieldOpportunityId?: SortOrder
     direction?: SortOrder
     amount?: SortOrder
-    usdValue?: SortOrder
     txHash?: SortOrder
     executedAt?: SortOrder
   }
@@ -6917,17 +6668,14 @@ export namespace Prisma {
     id?: SortOrder
     walletAddress?: SortOrder
     integrationId?: SortOrder
-    yieldOpportunityId?: SortOrder
     direction?: SortOrder
     amount?: SortOrder
-    usdValue?: SortOrder
     txHash?: SortOrder
     executedAt?: SortOrder
   }
 
   export type PortfolioTransactionSumOrderByAggregateInput = {
     amount?: SortOrder
-    usdValue?: SortOrder
   }
 
   export type EnumPortfolioDirectionWithAggregatesFilter<$PrismaModel = never> = {
@@ -6954,36 +6702,6 @@ export namespace Prisma {
     _sum?: NestedDecimalFilter<$PrismaModel>
     _min?: NestedDecimalFilter<$PrismaModel>
     _max?: NestedDecimalFilter<$PrismaModel>
-  }
-
-  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedDecimalNullableFilter<$PrismaModel>
-    _sum?: NestedDecimalNullableFilter<$PrismaModel>
-    _min?: NestedDecimalNullableFilter<$PrismaModel>
-    _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-
-  export type PortfolioTransactionCreateNestedManyWithoutYieldOpportunityInput = {
-    create?: XOR<PortfolioTransactionCreateWithoutYieldOpportunityInput, PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput> | PortfolioTransactionCreateWithoutYieldOpportunityInput[] | PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput[]
-    connectOrCreate?: PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput | PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput[]
-    createMany?: PortfolioTransactionCreateManyYieldOpportunityInputEnvelope
-    connect?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-  }
-
-  export type PortfolioTransactionUncheckedCreateNestedManyWithoutYieldOpportunityInput = {
-    create?: XOR<PortfolioTransactionCreateWithoutYieldOpportunityInput, PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput> | PortfolioTransactionCreateWithoutYieldOpportunityInput[] | PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput[]
-    connectOrCreate?: PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput | PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput[]
-    createMany?: PortfolioTransactionCreateManyYieldOpportunityInputEnvelope
-    connect?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -7018,42 +6736,8 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type PortfolioTransactionUpdateManyWithoutYieldOpportunityNestedInput = {
-    create?: XOR<PortfolioTransactionCreateWithoutYieldOpportunityInput, PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput> | PortfolioTransactionCreateWithoutYieldOpportunityInput[] | PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput[]
-    connectOrCreate?: PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput | PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput[]
-    upsert?: PortfolioTransactionUpsertWithWhereUniqueWithoutYieldOpportunityInput | PortfolioTransactionUpsertWithWhereUniqueWithoutYieldOpportunityInput[]
-    createMany?: PortfolioTransactionCreateManyYieldOpportunityInputEnvelope
-    set?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-    disconnect?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-    delete?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-    connect?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-    update?: PortfolioTransactionUpdateWithWhereUniqueWithoutYieldOpportunityInput | PortfolioTransactionUpdateWithWhereUniqueWithoutYieldOpportunityInput[]
-    updateMany?: PortfolioTransactionUpdateManyWithWhereWithoutYieldOpportunityInput | PortfolioTransactionUpdateManyWithWhereWithoutYieldOpportunityInput[]
-    deleteMany?: PortfolioTransactionScalarWhereInput | PortfolioTransactionScalarWhereInput[]
-  }
-
-  export type PortfolioTransactionUncheckedUpdateManyWithoutYieldOpportunityNestedInput = {
-    create?: XOR<PortfolioTransactionCreateWithoutYieldOpportunityInput, PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput> | PortfolioTransactionCreateWithoutYieldOpportunityInput[] | PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput[]
-    connectOrCreate?: PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput | PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput[]
-    upsert?: PortfolioTransactionUpsertWithWhereUniqueWithoutYieldOpportunityInput | PortfolioTransactionUpsertWithWhereUniqueWithoutYieldOpportunityInput[]
-    createMany?: PortfolioTransactionCreateManyYieldOpportunityInputEnvelope
-    set?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-    disconnect?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-    delete?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-    connect?: PortfolioTransactionWhereUniqueInput | PortfolioTransactionWhereUniqueInput[]
-    update?: PortfolioTransactionUpdateWithWhereUniqueWithoutYieldOpportunityInput | PortfolioTransactionUpdateWithWhereUniqueWithoutYieldOpportunityInput[]
-    updateMany?: PortfolioTransactionUpdateManyWithWhereWithoutYieldOpportunityInput | PortfolioTransactionUpdateManyWithWhereWithoutYieldOpportunityInput[]
-    deleteMany?: PortfolioTransactionScalarWhereInput | PortfolioTransactionScalarWhereInput[]
-  }
-
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
-  }
-
-  export type YieldOpportunityCreateNestedOneWithoutPortfolioTransactionInput = {
-    create?: XOR<YieldOpportunityCreateWithoutPortfolioTransactionInput, YieldOpportunityUncheckedCreateWithoutPortfolioTransactionInput>
-    connectOrCreate?: YieldOpportunityCreateOrConnectWithoutPortfolioTransactionInput
-    connect?: YieldOpportunityWhereUniqueInput
   }
 
   export type EnumPortfolioDirectionFieldUpdateOperationsInput = {
@@ -7066,22 +6750,6 @@ export namespace Prisma {
     decrement?: Decimal | DecimalJsLike | number | string
     multiply?: Decimal | DecimalJsLike | number | string
     divide?: Decimal | DecimalJsLike | number | string
-  }
-
-  export type NullableDecimalFieldUpdateOperationsInput = {
-    set?: Decimal | DecimalJsLike | number | string | null
-    increment?: Decimal | DecimalJsLike | number | string
-    decrement?: Decimal | DecimalJsLike | number | string
-    multiply?: Decimal | DecimalJsLike | number | string
-    divide?: Decimal | DecimalJsLike | number | string
-  }
-
-  export type YieldOpportunityUpdateOneRequiredWithoutPortfolioTransactionNestedInput = {
-    create?: XOR<YieldOpportunityCreateWithoutPortfolioTransactionInput, YieldOpportunityUncheckedCreateWithoutPortfolioTransactionInput>
-    connectOrCreate?: YieldOpportunityCreateOrConnectWithoutPortfolioTransactionInput
-    upsert?: YieldOpportunityUpsertWithoutPortfolioTransactionInput
-    connect?: YieldOpportunityWhereUniqueInput
-    update?: XOR<XOR<YieldOpportunityUpdateToOneWithWhereWithoutPortfolioTransactionInput, YieldOpportunityUpdateWithoutPortfolioTransactionInput>, YieldOpportunityUncheckedUpdateWithoutPortfolioTransactionInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -7303,17 +6971,6 @@ export namespace Prisma {
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
   }
 
-  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-  }
-
   export type NestedEnumPortfolioDirectionWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.PortfolioDirection | EnumPortfolioDirectionFieldRefInput<$PrismaModel>
     in?: $Enums.PortfolioDirection[] | ListEnumPortfolioDirectionFieldRefInput<$PrismaModel>
@@ -7340,254 +6997,11 @@ export namespace Prisma {
     _max?: NestedDecimalFilter<$PrismaModel>
   }
 
-  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
-    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
-    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
-    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedDecimalNullableFilter<$PrismaModel>
-    _sum?: NestedDecimalNullableFilter<$PrismaModel>
-    _min?: NestedDecimalNullableFilter<$PrismaModel>
-    _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-
-  export type PortfolioTransactionCreateWithoutYieldOpportunityInput = {
-    id?: string
-    walletAddress: string
-    integrationId: string
-    direction: $Enums.PortfolioDirection
-    amount: Decimal | DecimalJsLike | number | string
-    usdValue?: Decimal | DecimalJsLike | number | string | null
-    txHash: string
-    executedAt: Date | string
-  }
-
-  export type PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput = {
-    id?: string
-    walletAddress: string
-    integrationId: string
-    direction: $Enums.PortfolioDirection
-    amount: Decimal | DecimalJsLike | number | string
-    usdValue?: Decimal | DecimalJsLike | number | string | null
-    txHash: string
-    executedAt: Date | string
-  }
-
-  export type PortfolioTransactionCreateOrConnectWithoutYieldOpportunityInput = {
-    where: PortfolioTransactionWhereUniqueInput
-    create: XOR<PortfolioTransactionCreateWithoutYieldOpportunityInput, PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput>
-  }
-
-  export type PortfolioTransactionCreateManyYieldOpportunityInputEnvelope = {
-    data: PortfolioTransactionCreateManyYieldOpportunityInput | PortfolioTransactionCreateManyYieldOpportunityInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type PortfolioTransactionUpsertWithWhereUniqueWithoutYieldOpportunityInput = {
-    where: PortfolioTransactionWhereUniqueInput
-    update: XOR<PortfolioTransactionUpdateWithoutYieldOpportunityInput, PortfolioTransactionUncheckedUpdateWithoutYieldOpportunityInput>
-    create: XOR<PortfolioTransactionCreateWithoutYieldOpportunityInput, PortfolioTransactionUncheckedCreateWithoutYieldOpportunityInput>
-  }
-
-  export type PortfolioTransactionUpdateWithWhereUniqueWithoutYieldOpportunityInput = {
-    where: PortfolioTransactionWhereUniqueInput
-    data: XOR<PortfolioTransactionUpdateWithoutYieldOpportunityInput, PortfolioTransactionUncheckedUpdateWithoutYieldOpportunityInput>
-  }
-
-  export type PortfolioTransactionUpdateManyWithWhereWithoutYieldOpportunityInput = {
-    where: PortfolioTransactionScalarWhereInput
-    data: XOR<PortfolioTransactionUpdateManyMutationInput, PortfolioTransactionUncheckedUpdateManyWithoutYieldOpportunityInput>
-  }
-
-  export type PortfolioTransactionScalarWhereInput = {
-    AND?: PortfolioTransactionScalarWhereInput | PortfolioTransactionScalarWhereInput[]
-    OR?: PortfolioTransactionScalarWhereInput[]
-    NOT?: PortfolioTransactionScalarWhereInput | PortfolioTransactionScalarWhereInput[]
-    id?: StringFilter<"PortfolioTransaction"> | string
-    walletAddress?: StringFilter<"PortfolioTransaction"> | string
-    integrationId?: StringFilter<"PortfolioTransaction"> | string
-    yieldOpportunityId?: StringFilter<"PortfolioTransaction"> | string
-    direction?: EnumPortfolioDirectionFilter<"PortfolioTransaction"> | $Enums.PortfolioDirection
-    amount?: DecimalFilter<"PortfolioTransaction"> | Decimal | DecimalJsLike | number | string
-    usdValue?: DecimalNullableFilter<"PortfolioTransaction"> | Decimal | DecimalJsLike | number | string | null
-    txHash?: StringFilter<"PortfolioTransaction"> | string
-    executedAt?: DateTimeFilter<"PortfolioTransaction"> | Date | string
-  }
-
-  export type YieldOpportunityCreateWithoutPortfolioTransactionInput = {
-    id: string
-    name: string
-    content?: string | null
-    apy: number
-    type: string
-    network: string
-    tokenSymbol: string
-    tokenAddress?: string | null
-    providerId: string
-    providerName: string
-    protocol?: string
-    asset?: string
-    tvl?: number
-    cooldownDays?: number | null
-    warmupDays?: number | null
-    withdrawDays?: number | null
-    canEnter?: boolean
-    canExit?: boolean
-    createdAt?: Date | string
-    isAvailable?: boolean
-    rewardType: string
-    updatedAt: Date | string
-  }
-
-  export type YieldOpportunityUncheckedCreateWithoutPortfolioTransactionInput = {
-    id: string
-    name: string
-    content?: string | null
-    apy: number
-    type: string
-    network: string
-    tokenSymbol: string
-    tokenAddress?: string | null
-    providerId: string
-    providerName: string
-    protocol?: string
-    asset?: string
-    tvl?: number
-    cooldownDays?: number | null
-    warmupDays?: number | null
-    withdrawDays?: number | null
-    canEnter?: boolean
-    canExit?: boolean
-    createdAt?: Date | string
-    isAvailable?: boolean
-    rewardType: string
-    updatedAt: Date | string
-  }
-
-  export type YieldOpportunityCreateOrConnectWithoutPortfolioTransactionInput = {
-    where: YieldOpportunityWhereUniqueInput
-    create: XOR<YieldOpportunityCreateWithoutPortfolioTransactionInput, YieldOpportunityUncheckedCreateWithoutPortfolioTransactionInput>
-  }
-
-  export type YieldOpportunityUpsertWithoutPortfolioTransactionInput = {
-    update: XOR<YieldOpportunityUpdateWithoutPortfolioTransactionInput, YieldOpportunityUncheckedUpdateWithoutPortfolioTransactionInput>
-    create: XOR<YieldOpportunityCreateWithoutPortfolioTransactionInput, YieldOpportunityUncheckedCreateWithoutPortfolioTransactionInput>
-    where?: YieldOpportunityWhereInput
-  }
-
-  export type YieldOpportunityUpdateToOneWithWhereWithoutPortfolioTransactionInput = {
-    where?: YieldOpportunityWhereInput
-    data: XOR<YieldOpportunityUpdateWithoutPortfolioTransactionInput, YieldOpportunityUncheckedUpdateWithoutPortfolioTransactionInput>
-  }
-
-  export type YieldOpportunityUpdateWithoutPortfolioTransactionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
-    apy?: FloatFieldUpdateOperationsInput | number
-    type?: StringFieldUpdateOperationsInput | string
-    network?: StringFieldUpdateOperationsInput | string
-    tokenSymbol?: StringFieldUpdateOperationsInput | string
-    tokenAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    providerId?: StringFieldUpdateOperationsInput | string
-    providerName?: StringFieldUpdateOperationsInput | string
-    protocol?: StringFieldUpdateOperationsInput | string
-    asset?: StringFieldUpdateOperationsInput | string
-    tvl?: FloatFieldUpdateOperationsInput | number
-    cooldownDays?: NullableIntFieldUpdateOperationsInput | number | null
-    warmupDays?: NullableIntFieldUpdateOperationsInput | number | null
-    withdrawDays?: NullableIntFieldUpdateOperationsInput | number | null
-    canEnter?: BoolFieldUpdateOperationsInput | boolean
-    canExit?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean
-    rewardType?: StringFieldUpdateOperationsInput | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type YieldOpportunityUncheckedUpdateWithoutPortfolioTransactionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
-    apy?: FloatFieldUpdateOperationsInput | number
-    type?: StringFieldUpdateOperationsInput | string
-    network?: StringFieldUpdateOperationsInput | string
-    tokenSymbol?: StringFieldUpdateOperationsInput | string
-    tokenAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    providerId?: StringFieldUpdateOperationsInput | string
-    providerName?: StringFieldUpdateOperationsInput | string
-    protocol?: StringFieldUpdateOperationsInput | string
-    asset?: StringFieldUpdateOperationsInput | string
-    tvl?: FloatFieldUpdateOperationsInput | number
-    cooldownDays?: NullableIntFieldUpdateOperationsInput | number | null
-    warmupDays?: NullableIntFieldUpdateOperationsInput | number | null
-    withdrawDays?: NullableIntFieldUpdateOperationsInput | number | null
-    canEnter?: BoolFieldUpdateOperationsInput | boolean
-    canExit?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean
-    rewardType?: StringFieldUpdateOperationsInput | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PortfolioTransactionCreateManyYieldOpportunityInput = {
-    id?: string
-    walletAddress: string
-    integrationId: string
-    direction: $Enums.PortfolioDirection
-    amount: Decimal | DecimalJsLike | number | string
-    usdValue?: Decimal | DecimalJsLike | number | string | null
-    txHash: string
-    executedAt: Date | string
-  }
-
-  export type PortfolioTransactionUpdateWithoutYieldOpportunityInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    walletAddress?: StringFieldUpdateOperationsInput | string
-    integrationId?: StringFieldUpdateOperationsInput | string
-    direction?: EnumPortfolioDirectionFieldUpdateOperationsInput | $Enums.PortfolioDirection
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    usdValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    txHash?: StringFieldUpdateOperationsInput | string
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PortfolioTransactionUncheckedUpdateWithoutYieldOpportunityInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    walletAddress?: StringFieldUpdateOperationsInput | string
-    integrationId?: StringFieldUpdateOperationsInput | string
-    direction?: EnumPortfolioDirectionFieldUpdateOperationsInput | $Enums.PortfolioDirection
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    usdValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    txHash?: StringFieldUpdateOperationsInput | string
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PortfolioTransactionUncheckedUpdateManyWithoutYieldOpportunityInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    walletAddress?: StringFieldUpdateOperationsInput | string
-    integrationId?: StringFieldUpdateOperationsInput | string
-    direction?: EnumPortfolioDirectionFieldUpdateOperationsInput | $Enums.PortfolioDirection
-    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    usdValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    txHash?: StringFieldUpdateOperationsInput | string
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
 
 
   /**
    * Aliases for legacy arg types
    */
-    /**
-     * @deprecated Use YieldOpportunityCountOutputTypeDefaultArgs instead
-     */
-    export type YieldOpportunityCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = YieldOpportunityCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use YieldOpportunityDefaultArgs instead
      */

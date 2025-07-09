@@ -10,29 +10,28 @@ datasource db {
 }
 
 model YieldOpportunity {
-  id                   String                 @id
-  name                 String
-  content              String?
-  apy                  Float
-  type                 String                 @map("metadata_type")
-  network              String                 @map("token_network")
-  tokenSymbol          String                 @map("token_symbol")
-  tokenAddress         String?                @map("token_address")
-  providerId           String                 @map("provider_id")
-  providerName         String                 @map("provider_name")
-  protocol             String                 @default("")
-  asset                String                 @default("")
-  tvl                  Float                  @default(0)
-  cooldownDays         Int?                   @map("cooldown_days")
-  warmupDays           Int?                   @map("warmup_days")
-  withdrawDays         Int?                   @map("withdraw_days")
-  canEnter             Boolean                @default(true) @map("can_enter")
-  canExit              Boolean                @default(true) @map("can_exit")
-  createdAt            DateTime               @default(now()) @map("created_at")
-  isAvailable          Boolean                @default(true) @map("is_available")
-  rewardType           String                 @map("reward_type")
-  updatedAt            DateTime               @map("updated_at")
-  PortfolioTransaction PortfolioTransaction[]
+  id           String   @id
+  name         String
+  content      String?
+  apy          Float
+  type         String   @map("metadata_type")
+  network      String   @map("token_network")
+  tokenSymbol  String   @map("token_symbol")
+  tokenAddress String?  @map("token_address")
+  providerId   String   @map("provider_id")
+  providerName String   @map("provider_name")
+  protocol     String   @default("")
+  asset        String   @default("")
+  tvl          Float    @default(0)
+  cooldownDays Int?     @map("cooldown_days")
+  warmupDays   Int?     @map("warmup_days")
+  withdrawDays Int?     @map("withdraw_days")
+  canEnter     Boolean  @default(true) @map("can_enter")
+  canExit      Boolean  @default(true) @map("can_exit")
+  createdAt    DateTime @default(now()) @map("created_at")
+  isAvailable  Boolean  @default(true) @map("is_available")
+  rewardType   String   @map("reward_type")
+  updatedAt    DateTime @map("updated_at")
 }
 
 model PortfolioPosition {
@@ -70,16 +69,13 @@ model PortfolioRebalance {
 }
 
 model PortfolioTransaction {
-  id                 String             @id @default(dbgenerated("uuid_generate_v4()"))
-  walletAddress      String             @map("wallet_address")
-  integrationId      String             @map("integration_id")
-  yieldOpportunityId String             @map("yield_opportunity_id")
-  direction          PortfolioDirection
-  amount             Decimal
-  usdValue           Decimal?           @map("usd_value")
-  txHash             String             @unique @map("tx_hash")
-  executedAt         DateTime           @map("executed_at")
-  yieldOpportunity   YieldOpportunity   @relation(fields: [yieldOpportunityId], references: [id])
+  id            String             @id @default(dbgenerated("uuid_generate_v4()"))
+  walletAddress String             @map("wallet_address")
+  integrationId String             @map("integration_id")
+  direction     PortfolioDirection
+  amount        Decimal
+  txHash        String             @unique @map("tx_hash")
+  executedAt    DateTime           @map("executed_at")
 
   @@index([walletAddress])
   @@map("portfolio_transaction")
