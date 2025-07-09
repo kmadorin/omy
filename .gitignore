@@ -70,4 +70,4 @@ yarn-error.log*
 supabase/.temp
 
 #prisma generated
-packages/database/generated/
+packages/database/generated
