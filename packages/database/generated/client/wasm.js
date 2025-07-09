@@ -180,10 +180,8 @@ exports.Prisma.PortfolioTransactionScalarFieldEnum = {
   id: 'id',
   walletAddress: 'walletAddress',
   integrationId: 'integrationId',
-  yieldOpportunityId: 'yieldOpportunityId',
   direction: 'direction',
   amount: 'amount',
-  usdValue: 'usdValue',
   txHash: 'txHash',
   executedAt: 'executedAt'
 };
