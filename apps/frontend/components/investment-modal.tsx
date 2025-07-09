@@ -209,7 +209,7 @@ export function InvestmentModal({
   const processTransactions = useCallback(
     async (
       txs: Array<{ id: string }>,
-      meta: { wallet: string; integrationId: string; yieldOpportunityId: string; amount: number }
+      meta: { wallet: string; integrationId: string; amount: number }
     ): Promise<string[]> => {
       const hashes: string[] = [];
       setTotalTxCount(txs.length);
@@ -283,7 +283,6 @@ export function InvestmentModal({
                 body: JSON.stringify({
                   walletAddress: meta.wallet,
                   integrationId: meta.integrationId,
-                  yieldOpportunityId: meta.yieldOpportunityId,
                   direction: 'ENTER',
                   amount: meta.amount,
                   txHash: hash,
@@ -295,7 +294,6 @@ export function InvestmentModal({
                 addOrUpdatePosition(old as PortfolioPosition[], {
                   wallet_address: meta.wallet,
                   integration_id: meta.integrationId,
-                  yield_opportunity_id: meta.yieldOpportunityId,
                   amount: meta.amount,
                   usd_value: null,
                   entry_date: new Date().toISOString(),
@@ -418,7 +416,6 @@ export function InvestmentModal({
       const successTxs = await processTransactions(actionResponse.transactions, {
         wallet: address,
         integrationId: yieldOption.id,
-        yieldOpportunityId: yieldOption.id,
         amount: investAmount
       });
 

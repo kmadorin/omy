@@ -2275,7 +2275,6 @@ export namespace Prisma {
 
   export type PortfolioPositionMinAggregateOutputType = {
     id: string | null
-    yieldOpportunityId: string | null
     amount: number | null
     entryDate: Date | null
     lastModified: Date | null
@@ -2292,7 +2291,6 @@ export namespace Prisma {
 
   export type PortfolioPositionMaxAggregateOutputType = {
     id: string | null
-    yieldOpportunityId: string | null
     amount: number | null
     entryDate: Date | null
     lastModified: Date | null
@@ -2309,7 +2307,6 @@ export namespace Prisma {
 
   export type PortfolioPositionCountAggregateOutputType = {
     id: number
-    yieldOpportunityId: number
     amount: number
     entryDate: number
     lastModified: number
@@ -2338,7 +2335,6 @@ export namespace Prisma {
 
   export type PortfolioPositionMinAggregateInputType = {
     id?: true
-    yieldOpportunityId?: true
     amount?: true
     entryDate?: true
     lastModified?: true
@@ -2355,7 +2351,6 @@ export namespace Prisma {
 
   export type PortfolioPositionMaxAggregateInputType = {
     id?: true
-    yieldOpportunityId?: true
     amount?: true
     entryDate?: true
     lastModified?: true
@@ -2372,7 +2367,6 @@ export namespace Prisma {
 
   export type PortfolioPositionCountAggregateInputType = {
     id?: true
-    yieldOpportunityId?: true
     amount?: true
     entryDate?: true
     lastModified?: true
@@ -2476,7 +2470,6 @@ export namespace Prisma {
 
   export type PortfolioPositionGroupByOutputType = {
     id: string
-    yieldOpportunityId: string
     amount: number
     entryDate: Date
     lastModified: Date
@@ -2512,7 +2505,6 @@ export namespace Prisma {
 
   export type PortfolioPositionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    yieldOpportunityId?: boolean
     amount?: boolean
     entryDate?: boolean
     lastModified?: boolean
@@ -2529,7 +2521,6 @@ export namespace Prisma {
 
   export type PortfolioPositionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    yieldOpportunityId?: boolean
     amount?: boolean
     entryDate?: boolean
     lastModified?: boolean
@@ -2546,7 +2537,6 @@ export namespace Prisma {
 
   export type PortfolioPositionSelectScalar = {
     id?: boolean
-    yieldOpportunityId?: boolean
     amount?: boolean
     entryDate?: boolean
     lastModified?: boolean
@@ -2567,7 +2557,6 @@ export namespace Prisma {
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      yieldOpportunityId: string
       amount: number
       entryDate: Date
       lastModified: Date
@@ -2974,7 +2963,6 @@ export namespace Prisma {
    */ 
   interface PortfolioPositionFieldRefs {
     readonly id: FieldRef<"PortfolioPosition", 'String'>
-    readonly yieldOpportunityId: FieldRef<"PortfolioPosition", 'String'>
     readonly amount: FieldRef<"PortfolioPosition", 'Float'>
     readonly entryDate: FieldRef<"PortfolioPosition", 'DateTime'>
     readonly lastModified: FieldRef<"PortfolioPosition", 'DateTime'>
@@ -5231,7 +5219,6 @@ export namespace Prisma {
 
   export const PortfolioPositionScalarFieldEnum: {
     id: 'id',
-    yieldOpportunityId: 'yieldOpportunityId',
     amount: 'amount',
     entryDate: 'entryDate',
     lastModified: 'lastModified',
@@ -5544,7 +5531,6 @@ export namespace Prisma {
     OR?: PortfolioPositionWhereInput[]
     NOT?: PortfolioPositionWhereInput | PortfolioPositionWhereInput[]
     id?: StringFilter<"PortfolioPosition"> | string
-    yieldOpportunityId?: StringFilter<"PortfolioPosition"> | string
     amount?: FloatFilter<"PortfolioPosition"> | number
     entryDate?: DateTimeFilter<"PortfolioPosition"> | Date | string
     lastModified?: DateTimeFilter<"PortfolioPosition"> | Date | string
@@ -5561,7 +5547,6 @@ export namespace Prisma {
 
   export type PortfolioPositionOrderByWithRelationInput = {
     id?: SortOrder
-    yieldOpportunityId?: SortOrder
     amount?: SortOrder
     entryDate?: SortOrder
     lastModified?: SortOrder
@@ -5582,7 +5567,6 @@ export namespace Prisma {
     AND?: PortfolioPositionWhereInput | PortfolioPositionWhereInput[]
     OR?: PortfolioPositionWhereInput[]
     NOT?: PortfolioPositionWhereInput | PortfolioPositionWhereInput[]
-    yieldOpportunityId?: StringFilter<"PortfolioPosition"> | string
     amount?: FloatFilter<"PortfolioPosition"> | number
     entryDate?: DateTimeFilter<"PortfolioPosition"> | Date | string
     lastModified?: DateTimeFilter<"PortfolioPosition"> | Date | string
@@ -5599,7 +5583,6 @@ export namespace Prisma {
 
   export type PortfolioPositionOrderByWithAggregationInput = {
     id?: SortOrder
-    yieldOpportunityId?: SortOrder
     amount?: SortOrder
     entryDate?: SortOrder
     lastModified?: SortOrder
@@ -5624,7 +5607,6 @@ export namespace Prisma {
     OR?: PortfolioPositionScalarWhereWithAggregatesInput[]
     NOT?: PortfolioPositionScalarWhereWithAggregatesInput | PortfolioPositionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"PortfolioPosition"> | string
-    yieldOpportunityId?: StringWithAggregatesFilter<"PortfolioPosition"> | string
     amount?: FloatWithAggregatesFilter<"PortfolioPosition"> | number
     entryDate?: DateTimeWithAggregatesFilter<"PortfolioPosition"> | Date | string
     lastModified?: DateTimeWithAggregatesFilter<"PortfolioPosition"> | Date | string
@@ -5954,7 +5936,6 @@ export namespace Prisma {
 
   export type PortfolioPositionCreateInput = {
     id: string
-    yieldOpportunityId: string
     amount: number
     entryDate: Date | string
     lastModified?: Date | string
@@ -5971,7 +5952,6 @@ export namespace Prisma {
 
   export type PortfolioPositionUncheckedCreateInput = {
     id: string
-    yieldOpportunityId: string
     amount: number
     entryDate: Date | string
     lastModified?: Date | string
@@ -5988,7 +5968,6 @@ export namespace Prisma {
 
   export type PortfolioPositionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    yieldOpportunityId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     entryDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastModified?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6005,7 +5984,6 @@ export namespace Prisma {
 
   export type PortfolioPositionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    yieldOpportunityId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     entryDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastModified?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6022,7 +6000,6 @@ export namespace Prisma {
 
   export type PortfolioPositionCreateManyInput = {
     id: string
-    yieldOpportunityId: string
     amount: number
     entryDate: Date | string
     lastModified?: Date | string
@@ -6039,7 +6016,6 @@ export namespace Prisma {
 
   export type PortfolioPositionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    yieldOpportunityId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     entryDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastModified?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6056,7 +6032,6 @@ export namespace Prisma {
 
   export type PortfolioPositionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    yieldOpportunityId?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     entryDate?: DateTimeFieldUpdateOperationsInput | Date | string
     lastModified?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6497,7 +6472,6 @@ export namespace Prisma {
 
   export type PortfolioPositionCountOrderByAggregateInput = {
     id?: SortOrder
-    yieldOpportunityId?: SortOrder
     amount?: SortOrder
     entryDate?: SortOrder
     lastModified?: SortOrder
@@ -6519,7 +6493,6 @@ export namespace Prisma {
 
   export type PortfolioPositionMaxOrderByAggregateInput = {
     id?: SortOrder
-    yieldOpportunityId?: SortOrder
     amount?: SortOrder
     entryDate?: SortOrder
     lastModified?: SortOrder
@@ -6536,7 +6509,6 @@ export namespace Prisma {
 
   export type PortfolioPositionMinOrderByAggregateInput = {
     id?: SortOrder
-    yieldOpportunityId?: SortOrder
     amount?: SortOrder
     entryDate?: SortOrder
     lastModified?: SortOrder

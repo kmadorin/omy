@@ -9,7 +9,6 @@ export const runtime = 'nodejs';
 const BodySchema = z.object({
   walletAddress: z.string(),
   integrationId: z.string(),
-  yieldOpportunityId: z.string(),
   direction: z.enum(['ENTER', 'EXIT', 'CORRECTION']),
   amount: z.union([z.string(), z.number()]),
   txHash: z.string(),
@@ -30,10 +29,8 @@ export async function POST(request: Request) {
     data: {
       walletAddress: data.walletAddress,
       integrationId: data.integrationId,
-      yieldOpportunityId: data.yieldOpportunityId,
       direction: data.direction,
       amount,
-      usdValue: null,
       txHash: data.txHash,
       executedAt: new Date(data.executedAt)
     }
@@ -51,7 +48,7 @@ export async function POST(request: Request) {
 
   if (!existing) {
     const opp = await prisma.yieldOpportunity.findUnique({
-      where: { id: data.yieldOpportunityId },
+      where: { id: data.integrationId },
       select: { tokenSymbol: true, apy: true }
     });
     await prisma.portfolioPosition.create({
@@ -59,7 +56,6 @@ export async function POST(request: Request) {
         id: randomUUID(),
         walletAddress: data.walletAddress,
         integrationId: data.integrationId,
-        yieldOpportunityId: data.yieldOpportunityId,
         amount: amount.toNumber(),
         entryDate: new Date(data.executedAt),
         lastBalanceSync: now,
