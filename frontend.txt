@@ -326,6 +326,7 @@ File: package.json
   },
   "dependencies": {
     "@langchain/langgraph-sdk": "^0.0.11",
+    "@omy/database": "workspace:*",
     "@prisma/client": "^5.22.0",
     "@privy-io/react-auth": "^2.6.4",
     "@privy-io/wagmi": "^1.0.3",
@@ -355,7 +356,7 @@ File: package.json
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
+    "@types/node": "^20.19.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
@@ -10374,7 +10375,7 @@ File: tsconfig.json
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals", "node"],
     "incremental": true,
     "plugins": [
       {
@@ -14046,7 +14047,7 @@ export function addOrUpdatePosition(data: PortfolioPosition[] | undefined, posit
 ================================================
 File: lib/prisma.ts
 ================================================
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@omy/database';
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
