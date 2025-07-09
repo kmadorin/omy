@@ -33,19 +33,29 @@ model YieldOpportunity {
   createdAt     DateTime @default(now()) @map("created_at")
 }
 
+enum PortfolioDirection {
+  ENTER
+  EXIT
+  CORRECTION
+}
+
 model PortfolioPosition {
   id                 String   @id @map("id")
   yieldOpportunityId String   @map("yield_opportunity_id")
   amount             Float    @map("amount")
-  category           String   @map("category")
+  walletAddress      String   @map("wallet_address")
+  integrationId      String   @map("integration_id")
   entryDate         DateTime @map("entry_date")
   lastModified      DateTime @updatedAt @map("last_modified")
+  lastBalanceSync   DateTime? @map("last_balance_sync")
   currentApy        Float    @map("current_apy")
   isActive          Boolean  @default(true) @map("is_active")
   exitTxHash        String?  @map("exit_tx_hash")
   entryTxHash       String?  @map("entry_tx_hash")
   tokenAddress      String?  @map("token_address")
   tokenSymbol       String   @map("token_symbol")
+
+  @@unique([walletAddress, integrationId])
 
   @@map("portfolio_position")
 }
@@ -62,4 +72,20 @@ model PortfolioRebalance {
   annualIncomeChange Float    @map("annual_income_change")
 
   @@map("portfolio_rebalance")
+}
+
+model PortfolioTransaction {
+  id                 String           @id @default(uuid())
+  walletAddress      String           @map("wallet_address")
+  integrationId      String           @map("integration_id")
+  yieldOpportunity   YieldOpportunity @relation(fields: [yieldOpportunityId], references: [id])
+  yieldOpportunityId String           @map("yield_opportunity_id")
+  direction          PortfolioDirection
+  amount             Decimal
+  usdValue           Decimal?         @map("usd_value")
+  txHash             String           @unique @map("tx_hash")
+  executedAt         DateTime         @map("executed_at")
+
+  @@index([walletAddress])
+  @@map("portfolio_transaction")
 }

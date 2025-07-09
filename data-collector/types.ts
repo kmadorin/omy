@@ -68,15 +68,35 @@ export interface PortfolioPosition {
   id: string;
   yieldOpportunityId: string;
   amount: number;
-  category: string;
+  walletAddress: string;
+  integrationId: string;
   entryDate: Date;
   lastModified: Date;
+  lastBalanceSync?: Date;
   currentApy: number;
   isActive: boolean;
   exitTxHash?: string;
   entryTxHash?: string;
   tokenAddress?: string;
   tokenSymbol: string;
+}
+
+export enum PortfolioDirection {
+  ENTER = 'ENTER',
+  EXIT = 'EXIT',
+  CORRECTION = 'CORRECTION',
+}
+
+export interface PortfolioTransaction {
+  id: string;
+  walletAddress: string;
+  integrationId: string;
+  yieldOpportunityId: string;
+  direction: PortfolioDirection;
+  amount: string;
+  usdValue?: string;
+  txHash: string;
+  executedAt: Date;
 }
 
 export interface PortfolioRebalance {
@@ -88,5 +108,4 @@ export interface PortfolioRebalance {
   fromApy: number;
   toApy: number;
   gasCost: number;
-  annualIncomeChange: number;
-} 
+  annualIncomeChange: number;} 
