@@ -278,29 +278,7 @@ export function InvestmentModal({
                 description: `Transaction ${i + 1}/${txs.length} has been confirmed`,
               });
 
-              await fetch('/api/transactions', {
-                method: 'POST',
-                body: JSON.stringify({
-                  walletAddress: meta.wallet,
-                  integrationId: meta.integrationId,
-                  direction: 'ENTER',
-                  amount: meta.amount,
-                  txHash: hash,
-                  executedAt: new Date().toISOString()
-                })
-              })
-
-              queryClient.setQueryData(['portfolio', meta.wallet], (old: any) =>
-                addOrUpdatePosition(old as PortfolioPosition[], {
-                  wallet_address: meta.wallet,
-                  integration_id: meta.integrationId,
-                  amount: meta.amount,
-                  usd_value: null,
-                  entry_date: new Date().toISOString(),
-                  apy: 0,
-                  last_balance_sync: new Date().toISOString()
-                })
-              )
+              // Successful confirmation handled after loop
             } else {
               throw new Error(
                 `Transaction failed with status: ${result.status}`,
@@ -327,9 +305,39 @@ export function InvestmentModal({
         }
       }
 
+      // After the loop, if all transactions were successful
+      if (hashes.length === txs.length && hashes.length > 0) {
+        await fetch('/api/transactions', {
+          method: 'POST',
+          body: JSON.stringify({
+            walletAddress: meta.wallet,
+            integrationId: meta.integrationId,
+            txHash: hashes[hashes.length - 1],
+            direction: 'ENTER',
+            amount: meta.amount,
+            executedAt: new Date().toISOString(),
+            token_symbol: yieldOption.token_symbol,
+            token_address: yieldOption.token_address,
+          })
+        });
+
+        queryClient.setQueryData(['portfolio', meta.wallet], (old: any) =>
+          addOrUpdatePosition(old as PortfolioPosition[], {
+            wallet_address: meta.wallet,
+            integration_id: meta.integrationId,
+            yield_opportunity_id: meta.integrationId,
+            amount: meta.amount,
+            usd_value: null,
+            entry_date: new Date().toISOString(),
+            apy: 0,
+            last_balance_sync: new Date().toISOString()
+          })
+        );
+      }
+
       // All transactions completed successfully
       setIsInvesting(false);
-      return hashes;
+      return hashes; // Return all hashes as before
     },
     [sendTransactionAsync, toast, waitForTransaction, queryClient],
   );
