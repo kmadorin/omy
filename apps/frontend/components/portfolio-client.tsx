@@ -27,15 +27,14 @@ function SummaryCard({ totalUsd, avgApy }: SummaryData) {
   )
 }
 
-export default function PortfolioClient({ positions }: { positions: PortfolioPosition[] }) {
+export default function PortfolioClient() {
   const { address: wallet } = useAccount()
 
   const portfolioQuery = useQuery({
     queryKey: ['portfolio', wallet],
     queryFn: () => fetchPortfolio(wallet!),
     staleTime: 30_000,
-    enabled: !!wallet,
-    initialData: positions
+    enabled: !!wallet
   })
 
   const summaryQuery = useQuery({
@@ -49,16 +48,33 @@ export default function PortfolioClient({ positions }: { positions: PortfolioPos
     return <p className="text-center text-navy">Connect your wallet to view your portfolio.</p>
   }
 
-  const data: PortfolioPosition[] = portfolioQuery.data || []
+  const data: any[] = portfolioQuery.data || []
   const summary = summaryQuery.data as SummaryData | undefined
 
   return (
     <div className="space-y-6">
       {summary && <SummaryCard totalUsd={summary.totalUsd} avgApy={summary.avgApy} />}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.map((p) => (
-          <PositionCard key={p.integration_id} {...(p as any)} />
-        ))}
+        {data.map((p, i) => {
+          const yieldOpportunity = p.yieldOpportunity || {
+            name: p.integration_id || p.integrationId || 'Unknown',
+            apy: p.apy ?? 0,
+            tvl: p.tvl ?? 0,
+          }
+          return (
+            <PositionCard
+              key={`${p.integration_id || p.integrationId}-${p.id ?? i}`}
+              wallet_address={p.wallet_address}
+              integration_id={p.integration_id}
+              yield_opportunity_id={p.yield_opportunity_id}
+              amount={p.amount}
+              entry_date={p.entry_date}
+              apy={p.apy}
+              last_balance_sync={p.last_balance_sync}
+              yieldOpportunity={yieldOpportunity}
+            />
+          )
+        })}
       </div>
     </div>
   )

@@ -30,7 +30,6 @@ export default function PositionCard({
   integration_id,
   yield_opportunity_id,
   amount,
-  usd_value,
   entry_date,
   apy,
   last_balance_sync,
@@ -67,7 +66,7 @@ export default function PositionCard({
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-yellow flex items-center justify-center border-2 border-navy">
               <span className="text-navy font-bold">
-                {yieldOpportunity.name.slice(0, 1)}
+                {(yieldOpportunity?.name ?? '?').slice(0, 1)}
               </span>
             </div>
             <span className="font-bold text-navy">{yieldOpportunity.name}</span>
@@ -76,9 +75,6 @@ export default function PositionCard({
         </div>
         <div className="flex items-center justify-between text-navy">
           <span className="font-semibold">{amount}</span>
-          {usd_value !== null && (
-            <span className="text-sm">≈${usd_value.toFixed(2)}</span>
-          )}
         </div>
         <div className="flex items-center justify-between text-navy">
           <span>APY {apy.toFixed(2)}%</span>

@@ -11,18 +11,31 @@ export async function GET(req: Request) {
   }
 
   const positions = await prisma.portfolioPosition.findMany({
-    where: { walletAddress: wallet, isActive: true },
-    include: { yieldOpportunity: { select: { apy: true, tvl: true } } }
+    where: { walletAddress: wallet, isActive: true }
   });
 
+  // Get all unique integrationIds
+  const integrationIds = [...new Set(positions.map(p => p.integrationId))];
+
+  // Fetch yield opportunities for these integrationIds
+  const opportunities = await prisma.yieldOpportunity.findMany({
+    where: { id: { in: integrationIds } },
+    select: { id: true, name: true, apy: true, tvl: true }
+  });
+
+  // Map for quick lookup
+  const oppMap = Object.fromEntries(opportunities.map(o => [o.id, o]));
+
+  // Merge
   const result = positions.map(p => ({
-    integrationId: p.integrationId,
+    integration_id: p.integrationId,
     amount: p.amount,
-    usdValue: (p as any).usdValue ?? null,
-    apy: p.yieldOpportunity.apy,
-    tvl: p.yieldOpportunity.tvl,
-    entryDate: p.entryDate,
-    lastBalanceSync: p.lastBalanceSync
+    entry_date: p.entryDate,
+    last_balance_sync: p.lastBalanceSync,
+    yield_opportunity_id: p.yieldOpportunityId,
+    apy: p.currentApy,
+    wallet_address: p.walletAddress,
+    yieldOpportunity: oppMap[p.integrationId]
   }));
 
   return NextResponse.json(result);

@@ -209,7 +209,7 @@ export function InvestmentModal({
   const processTransactions = useCallback(
     async (
       txs: Array<{ id: string }>,
-      meta: { wallet: string; integrationId: string; amount: number }
+      meta: { wallet: string; yieldOpportunityId: string; amount: number }
     ): Promise<string[]> => {
       const hashes: string[] = [];
       setTotalTxCount(txs.length);
@@ -306,32 +306,24 @@ export function InvestmentModal({
 
       // After the loop, if all transactions were successful:
       if (hashes.length === txs.length && hashes.length > 0) {
+        console.log("meta", meta);
         await fetch('/api/transactions', {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({
             walletAddress: meta.wallet,
-            integrationId: meta.integrationId,
+            yieldOpportunityId: meta.yieldOpportunityId,
             txHash: hashes[hashes.length - 1],
             direction: 'ENTER',
             amount: meta.amount,
             executedAt: new Date().toISOString(),
-            token_symbol: yieldOption.token_symbol,
-            token_address: yieldOption.token_address,
-          })
+          }),
         });
 
-        queryClient.setQueryData(['portfolio', meta.wallet], (old: any) =>
-          addOrUpdatePosition(old as PortfolioPosition[], {
-            wallet_address: meta.wallet,
-            integration_id: meta.integrationId,
-            yield_opportunity_id: meta.integrationId,
-            amount: meta.amount,
-            usd_value: null,
-            entry_date: new Date().toISOString(),
-            apy: 0, // APY can be updated later
-            last_balance_sync: new Date().toISOString()
-          })
-        );
+        // Invalidate and refetch the portfolio query to get the updated state from the backend
+        queryClient.invalidateQueries({ queryKey: ['portfolio', meta.wallet] });
       }
 
       // All transactions completed successfully
@@ -419,10 +411,12 @@ export function InvestmentModal({
         throw new Error("No transactions returned from action");
       }
 
+      console.log("yieldOption", yieldOption);
+
       // 2. Process all transactions
       const successTxs = await processTransactions(actionResponse.transactions, {
         wallet: address,
-        integrationId: yieldOption.id,
+        yieldOpportunityId: yieldOption.id,
         amount: investAmount
       });
 

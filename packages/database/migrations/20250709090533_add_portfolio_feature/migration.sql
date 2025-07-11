@@ -1,3 +1,6 @@
+-- Enable uuid-ossp extension if not already enabled
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- CreateEnum
 CREATE TYPE "PortfolioDirection" AS ENUM ('ENTER', 'EXIT', 'CORRECTION');
 

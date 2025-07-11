@@ -32,24 +32,25 @@ model YieldOpportunity {
   isAvailable  Boolean  @default(true) @map("is_available")
   rewardType   String   @map("reward_type")
   updatedAt    DateTime @map("updated_at")
+
+  portfolioPositions   PortfolioPosition[]
+  portfolioTransactions PortfolioTransaction[]
+  @@map("YieldOpportunity")
 }
 
 model PortfolioPosition {
-  id              String    @id @map("id")
-  amount          Float     @map("amount")
-  entryDate       DateTime  @map("entry_date")
-  lastModified    DateTime  @updatedAt @map("last_modified")
-  currentApy      Float     @map("current_apy")
-  isActive        Boolean   @default(true) @map("is_active")
-  exitTxHash      String?   @map("exit_tx_hash")
-  entryTxHash     String?   @map("entry_tx_hash")
-  tokenAddress    String?   @map("token_address")
-  tokenSymbol     String    @map("token_symbol")
-  walletAddress   String    @map("wallet_address")
-  integrationId   String    @map("integration_id")
-  lastBalanceSync DateTime? @map("last_balance_sync")
+  id                String   @id @map("id")
+  amount            Float    @map("amount")
+  entryDate         DateTime @map("entry_date")
+  lastModified      DateTime @updatedAt @map("last_modified")
+  isActive          Boolean  @default(true) @map("is_active")
+  walletAddress     String   @map("wallet_address")
+  yieldOpportunityId String  @map("yield_opportunity_id")
+  lastBalanceSync   DateTime? @map("last_balance_sync")
 
-  @@unique([walletAddress, integrationId])
+  yieldOpportunity  YieldOpportunity @relation(fields: [yieldOpportunityId], references: [id])
+
+  @@unique([walletAddress, yieldOpportunityId])
   @@map("portfolio_position")
 }
 
@@ -68,13 +69,15 @@ model PortfolioRebalance {
 }
 
 model PortfolioTransaction {
-  id            String             @id @default(dbgenerated("uuid_generate_v4()"))
-  walletAddress String             @map("wallet_address")
-  integrationId String             @map("integration_id")
-  direction     PortfolioDirection
-  amount        Decimal
-  txHash        String             @unique @map("tx_hash")
-  executedAt    DateTime           @map("executed_at")
+  id                String             @id @default(dbgenerated("uuid_generate_v4()"))
+  walletAddress     String             @map("wallet_address")
+  yieldOpportunityId String            @map("yield_opportunity_id")
+  direction         PortfolioDirection
+  amount            Decimal
+  txHash            String             @unique @map("tx_hash")
+  executedAt        DateTime           @map("executed_at")
+
+  yieldOpportunity  YieldOpportunity   @relation(fields: [yieldOpportunityId], references: [id])
 
   @@index([walletAddress])
   @@map("portfolio_transaction")

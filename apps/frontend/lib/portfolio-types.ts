@@ -3,7 +3,6 @@ export interface PortfolioPosition {
   integration_id: string
   yield_opportunity_id: string
   amount: number
-  usd_value: number | null
   entry_date: string
   apy: number
   last_balance_sync: string | null
