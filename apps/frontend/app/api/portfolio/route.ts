@@ -14,12 +14,12 @@ export async function GET(req: Request) {
     where: { walletAddress: wallet, isActive: true }
   });
 
-  // Get all unique integrationIds
-  const integrationIds = [...new Set(positions.map(p => p.integrationId))];
+  // Get all unique yieldOpportunityIds
+  const yieldOpportunityIds = [...new Set(positions.map(p => p.yieldOpportunityId))];
 
-  // Fetch yield opportunities for these integrationIds
+  // Fetch yield opportunities for these ids
   const opportunities = await prisma.yieldOpportunity.findMany({
-    where: { id: { in: integrationIds } },
+    where: { id: { in: yieldOpportunityIds } },
     select: { id: true, name: true, apy: true, tvl: true }
   });
 
@@ -28,14 +28,15 @@ export async function GET(req: Request) {
 
   // Merge
   const result = positions.map(p => ({
-    integration_id: p.integrationId,
-    amount: p.amount,
+    yield_opportunity_id: p.yieldOpportunityId,
+    principal_sum: p.principalSum,
+    on_chain_amount: p.onChainAmount,
+    usd_value_cached: p.usdValueCached,
     entry_date: p.entryDate,
     last_balance_sync: p.lastBalanceSync,
-    yield_opportunity_id: p.yieldOpportunityId,
-    apy: p.currentApy,
     wallet_address: p.walletAddress,
-    yieldOpportunity: oppMap[p.integrationId]
+    apy: oppMap[p.yieldOpportunityId]?.apy,
+    yieldOpportunity: oppMap[p.yieldOpportunityId]
   }));
 
   return NextResponse.json(result);

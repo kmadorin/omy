@@ -17,7 +17,7 @@ interface Props extends PortfolioPosition {
   yieldOpportunity: YieldInfo
 }
 
-async function signAndSendExitTx(_integrationId: string, _amount: number) {
+async function signAndSendExitTx(_integrationId: string, _principal_sum: number) {
   return {
     async wait() {
       return { hash: '0x0' }
@@ -29,7 +29,7 @@ export default function PositionCard({
   wallet_address,
   integration_id,
   yield_opportunity_id,
-  amount,
+  principal_sum,
   entry_date,
   apy,
   last_balance_sync,
@@ -38,7 +38,7 @@ export default function PositionCard({
   const queryClient = useQueryClient()
 
   const handleExit = async () => {
-    const tx = await signAndSendExitTx(integration_id, amount)
+    const tx = await signAndSendExitTx(integration_id, principal_sum)
     const receipt = await tx.wait()
 
     await fetch('/api/transactions', {
@@ -48,7 +48,7 @@ export default function PositionCard({
         integrationId: integration_id,
         yieldOpportunityId: yield_opportunity_id,
         direction: 'EXIT',
-        amount,
+        principal_sum: principal_sum,
         txHash: receipt.hash,
         executedAt: new Date().toISOString()
       })
@@ -74,7 +74,7 @@ export default function PositionCard({
           <SyncBadge lastBalanceSync={last_balance_sync} />
         </div>
         <div className="flex items-center justify-between text-navy">
-          <span className="font-semibold">{amount}</span>
+          <span className="font-semibold">{principal_sum}</span>
         </div>
         <div className="flex items-center justify-between text-navy">
           <span>APY {apy.toFixed(2)}%</span>

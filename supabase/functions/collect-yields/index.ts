@@ -89,7 +89,7 @@ async function upsertYields(yields: YieldData[]) {
 
 async function collect(): Promise<void> {
   const apiKey = Deno.env.get('STAKEKIT_API_KEY')
-  const baseUrl = Deno.env.get('API_BASE_URL') ?? 'https://api.stakek.it'
+  const baseUrl = Deno.env.get('STAKEKIT_BASE_URL') ?? 'https://api.stakek.it'
 
   if (!apiKey) throw new Error('STAKEKIT_API_KEY not set')
 

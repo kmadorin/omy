@@ -1,130 +1,200 @@
-import { serve } from 'https://deno.land/std@0.224.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+/**
+ * Hybrid-sync: background balance reconciler
+ * ------------------------------------------
+ * • touches only positions that are active AND stale (lastBalanceSync older than 1 h)
+ * • compares on-chain share‑token balances with cached on_chain_amount
+ * • writes a CORRECTION PortfolioTransaction when they differ
+ * • refreshes usd_value_cached if we already have a price_usd
+ *
+ * ENV required:
+ *  SUPABASE_URL
+ *  SUPABASE_SERVICE_ROLE_KEY
+ *  STAKEKIT_API_KEY
+ *  STAKEKIT_BASE_URL   (e.g. "https://api.yield.xyz")
+ */
 
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { v4 as uuid } from "https://esm.sh/uuid@9";
+
+/* ───────────────────────── Types ───────────────────────── */
 interface Position {
-  wallet_address: string
-  integration_id: string
-  amount: string
-  token_symbol: string
-  yield_opportunity_id: string
+  id: string;
+  wallet_address: string;
+  yield_opportunity_id: string;
+  on_chain_amount: string;
+  is_active: boolean;
+  last_balance_sync: string | null;
+  YieldOpportunity?: {
+    token_network: string;
+    token_address: string;
+    token_symbol: string;
+  };
 }
 
-interface ChainBalance {
-  integrationId: string
-  walletAddress: string
-  amount: string
+interface LiveItem {
+  addresses: { address: string };
+  integrationId: string;
+  balances: Array<{
+    amount: string;
+    token: {
+      name: string;
+      symbol: string;
+      decimals: number;
+      network: string;
+      address: string;
+    };
+  }>;
 }
 
+/* ───────────────────────── Math helpers ───────────────────────── */
+function decimalToInt(src: string | number | bigint, decimals: number): bigint {
+  const [whole, frac = ""] = src.toString().split(".");
+  const padded = (frac + "0".repeat(decimals)).slice(0, decimals);
+  return BigInt(whole + padded);
+}
+
+function intToDecimal(n: bigint, decimals: number): string {
+  const sign = n < 0n ? "-" : "";
+  const abs = (n < 0n ? -n : n).toString().padStart(decimals + 1, "0");
+  const whole = abs.slice(0, -decimals);
+  const frac = abs.slice(-decimals).replace(/0+$/, "");
+  return sign + (frac ? `${whole}.${frac}` : whole);
+}
+
+const chunk = <T,>(arr: T[], size: number) =>
+  Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, (i + 1) * size)
+  );
+
+/* ───────────────────────── Main handler ───────────────────────── */
 serve(async () => {
-  try {
-    const env = Deno.env.toObject()
-    const supabaseUrl = env.SUPABASE_URL
-    const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY
-    const stakekitKey = env.STAKEKIT_API_KEY
-    const stakekitBase = env.STAKEKIT_BASE_URL ?? 'https://api.yield.xyz'
+  const env = Deno.env.toObject();
+  const sb = createClient(env.SUPABASE_URL!, env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false },
+  });
 
-    if (!supabaseUrl || !supabaseKey || !stakekitKey) {
-      throw new Error('Missing environment variables')
-    }
+  /* 1 ── pick positions that haven’t been synced for ≥1 h */
+  const oneHourAgo = new Date(Date.now() - 60 * 60_000).toISOString();
 
-    const supabase = createClient(supabaseUrl, supabaseKey, { auth: { persistSession: false } })
+  const { data: positions, error: posErr } = await sb
+    .from("portfolio_position")
+    .select(
+      `id,wallet_address,yield_opportunity_id,on_chain_amount,is_active,last_balance_sync,YieldOpportunity(token_network,token_address,token_symbol)`
+    )
+    .eq("is_active", true)
+    .or(`last_balance_sync.is.null,last_balance_sync.lt.${oneHourAgo}`);
 
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+  if (posErr) throw posErr;
+  if (!positions?.length)
+    return new Response("nothing to sync", { status: 200 });
 
-    const { data: positions, error } = await supabase
-      .from('portfolio_position')
-      .select('wallet_address,integration_id,amount,token_symbol,yield_opportunity_id')
-      .eq('is_active', true)
-      .or(`last_balance_sync.is.null,last_balance_sync.lt.${oneHourAgo}`)
-      .limit(10000)
+  const typedPositions = positions as Position[];
 
-    if (error) throw error
-    if (!positions || positions.length === 0) {
-      return new Response('Nothing to sync', { status: 200 })
-    }
+  /* 2 ── build price map */
+  const { data: priceRows, error: priceErr } = await sb
+    .from("token_price")
+    .select("network,symbol,price_usd");          
 
-    const batches = chunk(positions, 100)
-    const priceCache: Record<string, number | null> = {}
-    let apiCalls = 0
-    let updated = 0
+  const priceMap = Object.fromEntries(
+    priceRows.map(r => [
+      `${r.network}:${r.symbol.toLowerCase()}`,    
+      Number(r.price_usd),
+    ]),
+  );
 
-    for (const batch of batches) {
-      const ids = batch.map(p => p.integration_id).join(',')
-      const wallets = batch.map(p => p.wallet_address).join(',')
-      const url = `${stakekitBase.replace(/\/+$/, '')}/v1/yields/balances?integrationIds=${ids}&walletAddresses=${wallets}`
-      const res = await fetchWithRetry(url, stakekitKey)
-      apiCalls++
-      const onChain: ChainBalance[] = await res.json()
+  /* 3 ── iterate in StakeKit batches */
+  let updated = 0;
+  for (const batch of chunk(typedPositions, 100)) {
+    const body = batch.map((p) => ({
+      addresses: { address: p.wallet_address },
+      integrationId: p.yield_opportunity_id,
+    }));
 
-      for (const bal of onChain) {
-        const pos = batch.find(p => p.integration_id === bal.integrationId && p.wallet_address === bal.walletAddress)
-        if (!pos) continue
-        const newAmount = BigInt(bal.amount)
-        const oldAmount = BigInt(pos.amount)
-        if (newAmount === oldAmount) {
-          await supabase.from('portfolio_position')
-            .update({ last_balance_sync: new Date().toISOString() })
-            .match({ wallet_address: pos.wallet_address, integration_id: pos.integration_id })
-          continue
-        }
-
-        const diff = newAmount - oldAmount
-        if (!(pos.token_symbol in priceCache)) {
-          const priceUrl = `${stakekitBase.replace(/\/+$/, '')}/v1/tokens/prices?symbols=${pos.token_symbol}`
-          const priceRes = await fetch(priceUrl, { headers: { 'X-API-KEY': stakekitKey } })
-          if (priceRes.ok) {
-            const priceJson = await priceRes.json()
-            priceCache[pos.token_symbol] = Number(priceJson?.[0]?.priceUsd ?? null)
-          } else {
-            priceCache[pos.token_symbol] = null
-          }
-          apiCalls++
-        }
-        const price = priceCache[pos.token_symbol]
-        const usdValue = price != null ? Number(price) * Number(diff) : null
-
-        await supabase.from('portfolio_transaction').insert({
-          wallet_address: pos.wallet_address,
-          integration_id: pos.integration_id,
-          yield_opportunity_id: pos.yield_opportunity_id,
-          direction: 'CORRECTION',
-          amount: Number(diff),
-          usd_value: usdValue,
-          tx_hash: `SYNC-${crypto.randomUUID()}`,
-          executed_at: new Date().toISOString()
-        })
-
-        await supabase.from('portfolio_position')
-          .update({
-            amount: newAmount.toString(),
-            is_active: newAmount > 0n,
-            last_balance_sync: new Date().toISOString()
-          })
-          .match({ wallet_address: pos.wallet_address, integration_id: pos.integration_id })
-
-        updated++
+    const skRes = await fetch(
+      `${env.STAKEKIT_BASE_URL!.replace(/\/+$/, "")}/v1/yields/balances`,
+      {
+        method: "POST",
+        headers: {
+          "x-api-key": env.STAKEKIT_API_KEY!,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(body),
       }
+    );
+    if (!skRes.ok) throw new Error(`StakeKit ${skRes.status} ${await skRes.text()}`);
+
+    const liveBalances = (await skRes.json()) as LiveItem[];
+
+    for (const live of liveBalances) {
+      const wallet = live.addresses?.address;
+      if (!wallet) continue;
+
+      const pos = batch.find(
+        (p) =>
+          p.wallet_address === wallet &&
+          p.yield_opportunity_id === live.integrationId
+      );
+      if (!pos) continue;
+
+      const bal = live.balances[0]; // one per integration
+      const dec = bal.token.decimals;
+      const liveInt = decimalToInt(bal.amount, dec);
+      const localInt = decimalToInt(pos.on_chain_amount || "0", dec);
+
+      const priceKey = `${bal.token.network}:${bal.token.symbol.toLowerCase()}`;
+
+      /* 3‑a  keep TokenPrice metadata fresh */
+      await sb.from("token_price").upsert(
+        {
+          network: bal.token.network,
+          symbol: bal.token.symbol,
+          name: bal.token.name,
+          address: bal.token.address.toLowerCase(),
+          decimals: dec,
+        },
+        { onConflict: "network,symbol" }
+      );
+
+      if (liveInt === localInt) {
+        await sb
+          .from("portfolio_position")
+          .update({ last_balance_sync: new Date().toISOString() })
+          .eq("id", pos.id);
+        continue;
+      }
+
+      /* 3‑b  correction transaction */
+      const deltaStr = intToDecimal(liveInt - localInt, dec);
+      await sb.from("portfolio_transaction").insert({
+        id: uuid(),
+        wallet_address: pos.wallet_address,
+        yield_opportunity_id: pos.yield_opportunity_id,
+        direction: "CORRECTION",
+        amount: 0,
+        on_chain_delta: deltaStr,
+        tx_hash: `SYNC-${uuid()}`,
+        executed_at: new Date().toISOString(),
+      });
+
+      /* 3‑c  update snapshot */
+      const price = priceMap[priceKey];
+      await sb
+        .from("portfolio_position")
+        .update({
+          on_chain_amount: bal.amount,
+          usd_value_cached: price !== undefined ? Number(bal.amount) * price : null,
+          last_balance_sync: new Date().toISOString(),
+          is_active: liveInt > 0n,
+        })
+        .eq("id", pos.id);
+
+      updated++;
     }
-
-    return new Response(JSON.stringify({ processed: positions.length, updated, apiCalls }))
-  } catch (err) {
-    console.error('sync_balances failed', err)
-    return new Response('Internal error', { status: 500 })
   }
-})
 
-function chunk<T>(arr: T[], size: number): T[][] {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size))
-}
-
-async function fetchWithRetry(url: string, apiKey: string, retries = 3): Promise<Response> {
-  for (let i = 0; i < retries; i++) {
-    const res = await fetch(url, { headers: { 'X-API-KEY': apiKey } })
-    if (res.ok) return res
-    if (res.status !== 429 && res.status < 500) throw new Error(`StakeKit error ${res.status}`)
-    await new Promise(r => setTimeout(r, 2 ** (i + 1) * 1000))
-  }
-  const finalRes = await fetch(url, { headers: { 'X-API-KEY': apiKey } })
-  if (!finalRes.ok) throw new Error(`StakeKit error ${finalRes.status}`)
-  return finalRes
-}
+  return new Response(
+    JSON.stringify({ processed: typedPositions.length, updated }),
+    { headers: { "content-type": "application/json" } }
+  );
+});

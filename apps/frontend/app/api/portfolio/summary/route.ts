@@ -16,7 +16,7 @@ export async function GET(req: Request) {
   });
 
   // Get all unique integrationIds
-  const integrationIds = [...new Set(positions.map(p => p.integrationId))];
+  const integrationIds = [...new Set(positions.map(p => p.yieldOpportunityId))];
 
   // Fetch yield opportunities for these integrationIds
   const opportunities = await prisma.yieldOpportunity.findMany({
@@ -32,12 +32,12 @@ export async function GET(req: Request) {
   let totalAmount = new Decimal(0);
 
   for (const p of positions) {
-    const amount = new Decimal(p.amount);
+    const amount = new Decimal(p.principalSum);
     const usdVal = new Decimal((p as any).usdValue ?? 0);
     if (!(p as any).usdValue === null) {
       totalUsd = totalUsd.plus(usdVal);
     }
-    const apy = oppMap[p.integrationId]?.apy ?? 0;
+    const apy = oppMap[p.yieldOpportunityId]?.apy ?? 0;
     weightedApy = weightedApy.plus(amount.times(apy));
     totalAmount = totalAmount.plus(amount);
   }
@@ -46,5 +46,9 @@ export async function GET(req: Request) {
     ? 0
     : weightedApy.div(totalAmount).toNumber();
 
-  return NextResponse.json({ totalUsd: totalUsd.toNumber(), avgApy });
+  return NextResponse.json({
+    onChainAmount: totalAmount.toNumber(),
+    usdValueCached: totalUsd.toNumber(),
+    avgApy
+  });
 }

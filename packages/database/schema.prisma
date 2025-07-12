@@ -9,6 +9,22 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+/// ─────── TOKEN PRICE ───────
+/// composite PK = network+address (avoids symbol collisions)
+model TokenPrice {
+  network    String            // "polygon" | "ethereum" | …
+  address    String            // lowercase checksum
+  symbol     String
+  name       String
+  decimals   Int
+
+  priceUsd   Decimal?  @map("price_usd")     // null until fetched
+  fetchedAt  DateTime? @map("fetched_at")
+
+  @@id([network, address])
+  @@map("token_price")
+}
+
 model YieldOpportunity {
   id           String   @id
   name         String
@@ -38,9 +54,12 @@ model YieldOpportunity {
   @@map("YieldOpportunity")
 }
 
+/// ─────── CURRENT SNAPSHOT ───────
 model PortfolioPosition {
   id                String   @id @map("id")
-  amount            Float    @map("amount")
+  principalSum      Decimal  @default(0)  @map("principal_sum")   // Σ underlying
+  onChainAmount     Decimal  @default(0)  @map("on_chain_amount") // live aToken
+  usdValueCached    Decimal?              @map("usd_value_cached")
   entryDate         DateTime @map("entry_date")
   lastModified      DateTime @updatedAt @map("last_modified")
   isActive          Boolean  @default(true) @map("is_active")
@@ -68,12 +87,16 @@ model PortfolioRebalance {
   @@map("portfolio_rebalance")
 }
 
+/// ─────── TRANSACTION LOG ───────
+
 model PortfolioTransaction {
   id                String             @id @default(dbgenerated("uuid_generate_v4()"))
   walletAddress     String             @map("wallet_address")
   yieldOpportunityId String            @map("yield_opportunity_id")
   direction         PortfolioDirection
-  amount            Decimal
+  amount            Decimal                       // underlying token (USDC)
+  onChainDelta      Decimal?  @map("on_chain_delta") // signed Δ in aToken (only CORRECTION)
+  usdValue          Decimal?  @map("usd_value")
   txHash            String             @unique @map("tx_hash")
   executedAt        DateTime           @map("executed_at")
 
