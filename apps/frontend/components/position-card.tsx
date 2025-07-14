@@ -13,11 +13,19 @@ interface YieldInfo {
   tvl: number
 }
 
-interface Props extends PortfolioPosition {
+interface Props {
+  wallet_address: string
+  yield_opportunity_id: string
+  principal_sum: string | number
+  on_chain_amount: string | number
+  usd_value_cached: string | number
+  entry_date: string
+  last_balance_sync: string | null
+  apy: number
   yieldOpportunity: YieldInfo
 }
 
-async function signAndSendExitTx(_integrationId: string, _principal_sum: number) {
+async function signAndSendExitTx(_yieldOpportunityId: string, _principal_sum: number) {
   return {
     async wait() {
       return { hash: '0x0' }
@@ -27,7 +35,6 @@ async function signAndSendExitTx(_integrationId: string, _principal_sum: number)
 
 export default function PositionCard({
   wallet_address,
-  integration_id,
   yield_opportunity_id,
   principal_sum,
   entry_date,
@@ -38,14 +45,13 @@ export default function PositionCard({
   const queryClient = useQueryClient()
 
   const handleExit = async () => {
-    const tx = await signAndSendExitTx(integration_id, principal_sum)
+    const tx = await signAndSendExitTx(yield_opportunity_id, Number(principal_sum))
     const receipt = await tx.wait()
 
     await fetch('/api/transactions', {
       method: 'POST',
       body: JSON.stringify({
         walletAddress: wallet_address,
-        integrationId: integration_id,
         yieldOpportunityId: yield_opportunity_id,
         direction: 'EXIT',
         principal_sum: principal_sum,
@@ -55,7 +61,7 @@ export default function PositionCard({
     })
 
     queryClient.setQueryData(['portfolio', wallet_address], (old: any) =>
-      removePosition(old as PortfolioPosition[], integration_id)
+      removePosition(old as PortfolioPosition[], yield_opportunity_id)
     )
   }
 

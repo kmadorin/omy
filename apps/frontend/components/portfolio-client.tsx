@@ -12,6 +12,22 @@ interface SummaryData {
   avgApy: number
 }
 
+interface PortfolioData {
+  yield_opportunity_id: string
+  principal_sum: string | number
+  on_chain_amount: string | number
+  usd_value_cached: string | number
+  entry_date: string
+  last_balance_sync: string | null
+  wallet_address: string
+  apy: number
+  yieldOpportunity: {
+    name: string
+    apy: number
+    tvl: number
+  }
+}
+
 function fetcher(url: string) {
   return fetch(url).then(r => r.json())
 }
@@ -28,7 +44,7 @@ function SummaryCard({ totalUsd, avgApy }: SummaryData) {
   )
 }
 
-function fetchPortfolio(wallet: string) {
+function fetchPortfolio(wallet: string): Promise<PortfolioData[]> {
   return fetch(`/api/portfolio?wallet=${wallet}`).then(r => r.json())
 }
 
@@ -44,7 +60,7 @@ export default function PortfolioClient() {
   const { address: wallet } = useAccount()
   const queryClient = useQueryClient()
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<PortfolioData[]>({
     queryKey: ['portfolio', wallet] as const,
     queryFn: () => fetchPortfolio(wallet!),
     enabled: !!wallet,
@@ -75,8 +91,9 @@ export default function PortfolioClient() {
     )
   }
 
-  const totalUsd = data.reduce((sum, p) => sum + (Number(p.usd_value_cached) || 0), 0)
-  const totalOnChain = data.reduce((sum, p) => sum + (Number(p.on_chain_amount) || 0), 0)
+  const totalUsd = data.reduce((sum: number, p: PortfolioData) => sum + (Number(p.usd_value_cached) || 0), 0)
+  const totalOnChain = data.reduce((sum: number, p: PortfolioData) => sum + (Number(p.on_chain_amount) || 0), 0)
+  const avgApy = data.length > 0 ? data.reduce((sum: number, p: PortfolioData) => sum + (p.apy || 0), 0) / data.length : 0
 
   return (
     <div className="space-y-6">
@@ -85,11 +102,11 @@ export default function PortfolioClient() {
           <div className="text-sm text-navy">Total Value</div>
           <div className="text-2xl font-bold text-navy">${totalUsd.toFixed(2)}</div>
           <div className="text-sm text-navy">On-chain Amount: {totalOnChain.toFixed(2)}</div>
-          <div className="text-sm text-navy">Avg APY {data.avgApy?.toFixed(2)}%</div>
+          <div className="text-sm text-navy">Avg APY {avgApy.toFixed(2)}%</div>
         </CardContent>
       </Card>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.map((p, i) => (
+        {data.map((p: PortfolioData, i: number) => (
           <PositionCard
             key={p.yield_opportunity_id + '-' + i}
             wallet_address={p.wallet_address}
