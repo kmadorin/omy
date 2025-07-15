@@ -49,6 +49,11 @@ model YieldOpportunity {
   rewardType   String   @map("reward_type")
   updatedAt    DateTime @map("updated_at")
 
+  // New reward token fields
+  rewardTokenSymbol   String?  @map("reward_token_symbol")
+  rewardTokenAddress  String?  @map("reward_token_address")
+  rewardTokenName     String?  @map("reward_token_name")
+
   portfolioPositions   PortfolioPosition[]
   portfolioTransactions PortfolioTransaction[]
   @@map("YieldOpportunity")

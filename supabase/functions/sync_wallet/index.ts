@@ -15,54 +15,53 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { v4 as uuid } from "https://esm.sh/uuid@9";
 
 interface PositionRow {
-  id: string;
-  wallet_address: string;
-  yield_opportunity_id: string;
-  on_chain_amount: string;
-  YieldOpportunity: {
-    token_network: string;
-    token_address: string;
-    token_symbol: string;
-  } | null;
+	id: string;
+	wallet_address: string;
+	yield_opportunity_id: string;
+	on_chain_amount: string;
+	YieldOpportunity: {
+		token_network: string;
+		token_address: string;
+		token_symbol: string;
+	} | null;
 }
 
 /* helpers for exact-decimal → bigint */
 /* ───────────────────────── Math helpers ───────────────────────── */
 function decimalToInt(src: string | number | bigint, decimals: number): bigint {
-  const [whole, frac = ""] = src.toString().split(".");
-  const padded = (frac + "0".repeat(decimals)).slice(0, decimals);
-  return BigInt(whole + padded);
+	const [whole, frac = ""] = src.toString().split(".");
+	const padded = (frac + "0".repeat(decimals)).slice(0, decimals);
+	return BigInt(whole + padded);
 }
 
 function intToDecimal(n: bigint, decimals: number): string {
-  const sign = n < 0n ? "-" : "";
-  const abs = (n < 0n ? -n : n).toString().padStart(decimals + 1, "0");
-  const whole = abs.slice(0, -decimals);
-  const frac = abs.slice(-decimals).replace(/0+$/, "");
-  return sign + (frac ? `${whole}.${frac}` : whole);
+	const sign = n < 0n ? "-" : "";
+	const abs = (n < 0n ? -n : n).toString().padStart(decimals + 1, "0");
+	const whole = abs.slice(0, -decimals);
+	const frac = abs.slice(-decimals).replace(/0+$/, "");
+	return sign + (frac ? `${whole}.${frac}` : whole);
 }
 
 serve(async (req) => {
-  /* 0. parse wallet */
-  let wallet: string | undefined;
-  try {
-    ({ wallet } = await req.json());
-  } catch {
-    /* fallthrough */
-  }
-  if (!wallet || typeof wallet !== "string")
-    return new Response("missing wallet", { status: 400 });
+	/* 0. parse wallet */
+	let wallet: string | undefined;
+	try {
+		({ wallet } = await req.json());
+	} catch {
+		/* fallthrough */
+	}
+	if (!wallet || typeof wallet !== "string") return new Response("missing wallet", { status: 400 });
 
-  const env = Deno.env.toObject();
-  const sb = createClient(env.SUPABASE_URL!, env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: { persistSession: false },
-  });
+	const env = Deno.env.toObject();
+	const sb = createClient(env.SUPABASE_URL!, env.SUPABASE_SERVICE_ROLE_KEY!, {
+		auth: { persistSession: false },
+	});
 
-  /* 1. active positions for this wallet */
-  const { data: rows, error } = await sb
-    .from("portfolio_position")
-    .select(
-      `
+	/* 1. active positions for this wallet */
+	const { data: rows, error } = await sb
+		.from("portfolio_position")
+		.select(
+			`
       id,
       wallet_address,
       yield_opportunity_id,
@@ -72,220 +71,174 @@ serve(async (req) => {
         token_address,
         token_symbol
       )
-    `,
-    )
-    .eq("wallet_address", wallet)
-    .eq("is_active", true);
+    `
+		)
+		.eq("wallet_address", wallet);
 
-  if (error) return new Response(error.message, { status: 500 });
-  if (!rows?.length) return new Response("no positions", { status: 200 });
+	if (error) return new Response(error.message, { status: 500 });
+	if (!rows?.length) return new Response("no positions", { status: 200 });
 
-  const positions = rows as PositionRow[];
+	const positions = rows as PositionRow[];
 
-  /* 2. StakeKit balances call (one batch ≤100) */
-  const body = positions.map((p) => ({
-    addresses: { address: p.wallet_address },
-    integrationId: p.yield_opportunity_id,
-  }));
-  const skRes = await fetch(
-    `${env.STAKEKIT_BASE_URL!.replace(/\/+$/, "")}/v1/yields/balances`,
-    {
-      method: "POST",
-      headers: {
-        "x-api-key": env.STAKEKIT_API_KEY!,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(body),
-    },
-  );
-  if (!skRes.ok) return new Response(await skRes.text(), { status: 502 });
-  type SK = {
-    addresses: { address: string };
-    integrationId: string;
-    balances: {
-      type: string;
-      amount: string;
-      token: {
-        name: string;
-        symbol: string;
-        decimals: number;
-        network: string;
-        address: string;
-      };
-    }[];
-  }[];
-  const liveArr: SK = await skRes.json();
+	/* 2. StakeKit balances call (one batch ≤100) */
+	const body = positions.map((p) => ({
+		addresses: { address: p.wallet_address },
+		integrationId: p.yield_opportunity_id,
+	}));
+	const skRes = await fetch(`${env.STAKEKIT_BASE_URL!.replace(/\/+$/, "")}/v1/yields/balances`, {
+		method: "POST",
+		headers: {
+			"x-api-key": env.STAKEKIT_API_KEY!,
+			"content-type": "application/json",
+		},
+		body: JSON.stringify(body),
+	});
+	if (!skRes.ok) return new Response(await skRes.text(), { status: 502 });
+	type SK = {
+		addresses: { address: string };
+		integrationId: string;
+		balances: {
+			type: string;
+			amount: string;
+			token: {
+				name: string;
+				symbol: string;
+				decimals: number;
+				network: string;
+				address: string;
+			};
+		}[];
+	}[];
+	const liveArr: SK = await skRes.json();
 
-  /* 3. price cache */
-  const { data: priceRows } = await sb
-    .from("token_price")
-    .select("network,address,price_usd,fetched_at");
-  const priceMap = Object.fromEntries(
-    priceRows!.map((r) => [
-      `${r.network}:${r.address.toLowerCase()}`,
-      Number(r.price_usd),
-    ]),
-  );
+	/* 3. price cache */
+	const { data: priceRows } = await sb.from("token_price").select("network,address,price_usd,fetched_at");
+	const priceMap = Object.fromEntries(priceRows!.map((r) => [`${r.network}:${r.address.toLowerCase()}`, Number(r.price_usd)]));
 
-  let updated = 0;
+	let updated = 0;
 
-  for (const live of liveArr) {
-    const walletAddr = live.addresses?.address;
-    if (!walletAddr) continue;
-    const pos = positions.find(
-      (p) =>
-        p.wallet_address === walletAddr &&
-        p.yield_opportunity_id === live.integrationId,
-    );
-    if (!pos) continue;
+	for (const live of liveArr) {
+		const walletAddr = live.addresses?.address;
+		if (!walletAddr) continue;
+		const pos = positions.find((p) => p.wallet_address === walletAddr && p.yield_opportunity_id === live.integrationId);
+		if (!pos) continue;
 
-    // Find the first available balance (skip rewards, locked, etc.)
-    const bal =
-      live.balances?.find((b) => b.type === "available") || live.balances?.[0];
+		// Find the first available balance (skip rewards, locked, etc.)
+		const bal = live.balances?.find((b) => b.type === "available") || live.balances?.[0];
 
-    // Handle empty balances array (100% unstaked)
-    if (!live.balances || live.balances.length === 0) {
-      // Use token info from YieldOpportunity for empty balances
-      const yieldOpp = pos.YieldOpportunity;
-      if (!yieldOpp) continue;
+		// Handle empty balances array (100% unstaked)
+		if (!live.balances || live.balances.length === 0) {
+			// Use token info from YieldOpportunity for empty balances
+			const yieldOpp = pos.YieldOpportunity;
+			if (!yieldOpp) continue;
 
-      const token = {
-        name: yieldOpp.token_symbol,
-        symbol: yieldOpp.token_symbol,
-        decimals: 18, // Default decimals, will be updated from token_price if exists
-        network: yieldOpp.token_network,
-        address: yieldOpp.token_address || "",
-      };
+			const token = {
+				name: yieldOpp.token_symbol,
+				symbol: yieldOpp.token_symbol,
+				decimals: 18, // Default decimals, will be updated from token_price if exists
+				network: yieldOpp.token_network,
+				address: yieldOpp.token_address || "",
+			};
 
-      const localInt = decimalToInt(pos.on_chain_amount || "0", token.decimals);
-      const deltaInt = 0n - localInt; // Live balance is 0, so delta is negative of local balance
-      if (deltaInt === 0n) continue;
+			const localInt = decimalToInt(pos.on_chain_amount || "0", token.decimals);
+			const deltaInt = 0n - localInt; // Live balance is 0, so delta is negative of local balance
+			if (deltaInt === 0n) continue;
 
-      // Process the zero balance case
-      await processBalanceUpdate(
-        sb,
-        pos,
-        token,
-        "0",
-        deltaInt,
-        token.decimals,
-        priceMap,
-        env,
-      );
-      updated++;
-      continue;
-    }
+			// Process the zero balance case
+			await processBalanceUpdate(sb, pos, token, "0", deltaInt, token.decimals, priceMap, env);
+			updated++;
+			continue;
+		}
 
-    if (!bal || !bal.token) continue;
+		if (!bal || !bal.token) continue;
 
-    const { token } = bal;
-    const decimals = token.decimals;
-    const liveInt = decimalToInt(bal.amount, decimals);
-    const localInt = decimalToInt(pos.on_chain_amount || "0", decimals);
-    const deltaInt = liveInt - localInt;
-    if (deltaInt === 0n) continue;
+		const { token } = bal;
+		const decimals = token.decimals;
+		const liveInt = decimalToInt(bal.amount, decimals);
+		const localInt = decimalToInt(pos.on_chain_amount || "0", decimals);
+		const deltaInt = liveInt - localInt;
+		if (deltaInt === 0n) continue;
 
-    // Process the balance update
-    await processBalanceUpdate(
-      sb,
-      pos,
-      token,
-      bal.amount,
-      deltaInt,
-      decimals,
-      priceMap,
-      env,
-    );
-    updated++;
-  }
+		// Process the balance update
+		await processBalanceUpdate(sb, pos, token, bal.amount, deltaInt, decimals, priceMap, env);
+		updated++;
+	}
 
-  return new Response(
-    JSON.stringify({ processed: positions.length, updated }),
-    {
-      headers: { "content-type": "application/json" },
-    },
-  );
+	return new Response(JSON.stringify({ processed: positions.length, updated }), {
+		headers: { "content-type": "application/json" },
+	});
 });
 
-async function processBalanceUpdate(
-  sb: any,
-  pos: any,
-  token: any,
-  newAmount: string,
-  deltaInt: bigint,
-  decimals: number,
-  priceMap: any,
-  env: any,
-) {
-  /* 3-a upsert token metadata */
-  await sb.from("token_price").upsert(
-    {
-      network: token.network,
-      address: token.address.toLowerCase(),
-      symbol: token.symbol,
-      name: token.name,
-      decimals: token.decimals,
-    },
-    { onConflict: "network,address" },
-  );
+async function processBalanceUpdate(sb: any, pos: any, token: any, newAmount: string, deltaInt: bigint, decimals: number, priceMap: any, env: any) {
+	/* 3-a upsert token metadata */
+	await sb.from("token_price").upsert(
+		{
+			network: token.network,
+			address: token.address.toLowerCase(),
+			symbol: token.symbol,
+			name: token.name,
+			decimals: token.decimals,
+		},
+		{ onConflict: "network,address" }
+	);
 
-  /* 3-b price fetch on-demand if missing */
-  const key = `${token.network}:${token.address.toLowerCase()}`;
-  let price = priceMap[key];
-  if (price === undefined) {
-    const prRes = await fetch(`${env.STAKEKIT_BASE_URL}/v1/token/prices`, {
-      method: "POST",
-      headers: {
-        "x-api-key": env.STAKEKIT_API_KEY!,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        tokenList: [
-          {
-            name: token.name,
-            network: token.network,
-            symbol: token.symbol,
-            decimals: token.decimals,
-          },
-        ],
-      }),
-    });
-    if (prRes.ok) {
-      const [{ priceUsd }] = (await prRes.json()) as [{ priceUsd: number }];
-      price = priceUsd;
-      await sb.from("token_price").upsert(
-        {
-          network: token.network,
-          address: token.address.toLowerCase(),
-          price_usd: priceUsd,
-          fetched_at: new Date().toISOString(),
-        },
-        { onConflict: "network,address" },
-      );
-    }
-  }
+	/* 3-b price fetch on-demand if missing */
+	const key = `${token.network}:${token.address.toLowerCase()}`;
+	let price = priceMap[key];
+	if (price === undefined) {
+		const prRes = await fetch(`${env.STAKEKIT_BASE_URL}/v1/token/prices`, {
+			method: "POST",
+			headers: {
+				"x-api-key": env.STAKEKIT_API_KEY!,
+				"content-type": "application/json",
+			},
+			body: JSON.stringify({
+				tokenList: [
+					{
+						name: token.name,
+						network: token.network,
+						symbol: token.symbol,
+						decimals: token.decimals,
+					},
+				],
+			}),
+		});
+		if (prRes.ok) {
+			const [{ priceUsd }] = (await prRes.json()) as [{ priceUsd: number }];
+			price = priceUsd;
+			await sb.from("token_price").upsert(
+				{
+					network: token.network,
+					address: token.address.toLowerCase(),
+					price_usd: priceUsd,
+					fetched_at: new Date().toISOString(),
+				},
+				{ onConflict: "network,address" }
+			);
+		}
+	}
 
-  /* 3-c write CORRECTION */
-  await sb.from("portfolio_transaction").insert({
-    id: uuid(),
-    wallet_address: pos.wallet_address,
-    yield_opportunity_id: pos.yield_opportunity_id,
-    direction: "CORRECTION",
-    amount: 0,
-    on_chain_delta: intToDecimal(deltaInt, decimals),
-    tx_hash: `SYNC-${uuid()}`,
-    executed_at: new Date().toISOString(),
-  });
+	/* 3-c write CORRECTION */
+	await sb.from("portfolio_transaction").insert({
+		id: uuid(),
+		wallet_address: pos.wallet_address,
+		yield_opportunity_id: pos.yield_opportunity_id,
+		direction: "CORRECTION",
+		amount: 0,
+		on_chain_delta: intToDecimal(deltaInt, decimals),
+		tx_hash: `SYNC-${uuid()}`,
+		executed_at: new Date().toISOString(),
+	});
 
-  /* 3-d update snapshot */
-  const liveInt = decimalToInt(newAmount, decimals);
-  await sb
-    .from("portfolio_position")
-    .update({
-      on_chain_amount: newAmount,
-      usd_value_cached: price !== undefined ? Number(newAmount) * price : null,
-      last_balance_sync: new Date().toISOString(),
-      is_active: liveInt > 0n,
-    })
-    .eq("id", pos.id);
+	/* 3-d update snapshot */
+	const liveInt = decimalToInt(newAmount, decimals);
+	await sb
+		.from("portfolio_position")
+		.update({
+			on_chain_amount: newAmount,
+			usd_value_cached: price !== undefined ? Number(newAmount) * price : null,
+			last_balance_sync: new Date().toISOString(),
+			is_active: liveInt > 0n,
+		})
+		.eq("id", pos.id);
 }
