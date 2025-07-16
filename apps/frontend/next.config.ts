@@ -1,11 +1,7 @@
-const path = require("path");
+import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-	// This is the crucial part for monorepo support with Prisma
-	experimental: {
-		outputFileTracingRoot: path.join(__dirname, "../../"),
-	},
+const nextConfig: NextConfig = {
+	/* config options here */
 };
 
 export default nextConfig;

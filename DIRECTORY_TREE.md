@@ -203,10 +203,10 @@ omy/
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
 	"installCommand": "pnpm install && pnpm run prisma:generate",
-	"buildCommand": "pnpm run prisma:generate && pnpm run copy:prisma-client && pnpm run build:frontend",
+	"buildCommand": "pnpm run prisma:generate && pnpm run build:frontend",
 	"outputDirectory": "apps/frontend/.next"
 }
-````
+```
 
 ---
 
@@ -227,8 +227,7 @@ omy/
 		"lint": "pnpm --filter \"./apps/*\" lint",
 		"prisma:generate": "pnpm --filter @omy/database generate",
 		"prisma:migrate": "pnpm --filter @omy/database run migrate:dev",
-		"prisma:migrate:deploy": "pnpm --filter @omy/database run migrate:deploy",
-		"copy:prisma-client": "[ \"$(realpath packages/database/generated/client)\" = \"$(realpath apps/frontend/node_modules/@omy/database/generated/client)\" ] || (mkdir -p apps/frontend/node_modules/@omy/database/generated && cp -r packages/database/generated/client apps/frontend/node_modules/@omy/database/generated/)"
+		"prisma:migrate:deploy": "pnpm --filter @omy/database run migrate:deploy"
 	},
 	"devDependencies": {
 		"next": "15.1.0",
@@ -336,6 +335,24 @@ omy/
 		"vitest": "^1.6.1"
 	}
 }
+```
+
+---
+
+## apps/frontend/next.config.ts
+
+```ts
+const path = require("path");
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+	// This is the crucial part for monorepo support with Prisma
+	experimental: {
+		outputFileTracingRoot: path.join(__dirname, "../../"),
+	},
+};
+
+export default nextConfig;
 ```
 
 ---
@@ -510,4 +527,4 @@ enum PortfolioDirection {
   EXIT
   CORRECTION
 }
-```
+````

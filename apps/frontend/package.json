@@ -11,7 +11,6 @@
 	},
 	"dependencies": {
 		"@langchain/langgraph-sdk": "^0.0.11",
-		"@omy/database": "workspace:*",
 		"@prisma/client": "^5.22.0",
 		"@radix-ui/react-dialog": "^1.1.14",
 		"@radix-ui/react-label": "^2.1.7",

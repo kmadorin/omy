@@ -71,3 +71,4 @@ supabase/.temp
 
 #prisma generated
 packages/database/generated
+apps/frontend/prisma/

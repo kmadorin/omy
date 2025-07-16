@@ -1,13 +1,16 @@
-import { PrismaClient } from '@omy/database';
+// apps/frontend/lib/prisma.ts
 
+import { PrismaClient } from "../prisma/generated/client";
+
+// This prevents creating a new client on every hot reload in development
 const globalForPrisma = globalThis as unknown as {
-  prisma?: PrismaClient;
+	prisma: PrismaClient | undefined;
 };
 
 export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient();
+	globalForPrisma.prisma ??
+	new PrismaClient({
+		log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+	});
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
-}
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
