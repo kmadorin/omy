@@ -1,5 +1,6 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
-	"buildCommand": "pnpm --filter @omy/database generate && pnpm run build",
-	"outputDirectory": ".next"
+	"installCommand": "pnpm install",
+	"buildCommand": "pnpm run prisma:generate && pnpm run prod:frontend",
+	"outputDirectory": "apps/frontend/.next"
 }
