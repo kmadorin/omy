@@ -13,7 +13,7 @@
 		"prisma:generate": "pnpm --filter @omy/database generate",
 		"prisma:migrate": "pnpm --filter @omy/database run migrate:dev",
 		"prisma:migrate:deploy": "pnpm --filter @omy/database run migrate:deploy",
-		"copy:prisma-client": "cp -r packages/database/node_modules/@prisma apps/frontend/node_modules/ && cp -r packages/database/node_modules/@prisma/client apps/frontend/node_modules/@prisma/"
+		"copy:prisma-client": "mkdir -p apps/frontend/node_modules/@omy/database/generated && cp -r packages/database/generated/client apps/frontend/node_modules/@omy/database/generated/"
 	},
 	"devDependencies": {
 		"next": "15.1.0",
