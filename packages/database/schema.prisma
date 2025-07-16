@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+	output   = "../../apps/frontend/prisma/generated/client"
+  // output   = "./generated/client"
+	binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// ─────── TOKEN PRICE ───────
+/// composite PK = network+address (avoids symbol collisions)
+model TokenPrice {
+  network    String            // "polygon" | "ethereum" | …
+  address    String            // lowercase checksum
+  symbol     String
+  name       String
+  decimals   Int
+
+  priceUsd   Decimal?  @map("price_usd")     // null until fetched
+  fetchedAt  DateTime? @map("fetched_at")
+
+  @@id([network, address])
+  @@map("token_price")
+}
+
+model YieldOpportunity {
+  id           String   @id
+  name         String
+  content      String?
+  apy          Float
+  type         String   @map("metadata_type")
+  network      String   @map("token_network")
+  tokenSymbol  String   @map("token_symbol")
+  tokenAddress String?  @map("token_address")
+  providerId   String   @map("provider_id")
+  providerName String   @map("provider_name")
+  protocol     String   @default("")
+  asset        String   @default("")
+  tvl          Float    @default(0)
+  cooldownDays Int?     @map("cooldown_days")
+  warmupDays   Int?     @map("warmup_days")
+  withdrawDays Int?     @map("withdraw_days")
+  canEnter     Boolean  @default(true) @map("can_enter")
+  canExit      Boolean  @default(true) @map("can_exit")
+  createdAt    DateTime @default(now()) @map("created_at")
+  isAvailable  Boolean  @default(true) @map("is_available")
+  rewardType   String   @map("reward_type")
+  updatedAt    DateTime @map("updated_at")
+
+  // New reward token fields
+  rewardTokenSymbol   String?  @map("reward_token_symbol")
+  rewardTokenAddress  String?  @map("reward_token_address")
+  rewardTokenName     String?  @map("reward_token_name")
+
+  portfolioPositions   PortfolioPosition[]
+  portfolioTransactions PortfolioTransaction[]
+  @@map("YieldOpportunity")
+}
+
+/// ─────── CURRENT SNAPSHOT ───────
+model PortfolioPosition {
+  id                String   @id @map("id")
+  principalSum      Decimal  @default(0)  @map("principal_sum")   // Σ underlying
+  onChainAmount     Decimal  @default(0)  @map("on_chain_amount") // live aToken
+  usdValueCached    Decimal?              @map("usd_value_cached")
+  entryDate         DateTime @map("entry_date")
+  lastModified      DateTime @updatedAt @map("last_modified")
+  isActive          Boolean  @default(true) @map("is_active")
+  walletAddress     String   @map("wallet_address")
+  yieldOpportunityId String  @map("yield_opportunity_id")
+  lastBalanceSync   DateTime? @map("last_balance_sync")
+
+  yieldOpportunity  YieldOpportunity @relation(fields: [yieldOpportunityId], references: [id])
+
+  @@unique([walletAddress, yieldOpportunityId])
+  @@map("portfolio_position")
+}
+
+model PortfolioRebalance {
+  id                 String   @id
+  fromPositionId     String   @map("from_position_id")
+  toPositionId       String   @map("to_position_id")
+  amount             Float
+  executedAt         DateTime @map("executed_at")
+  fromApy            Float    @map("from_apy")
+  toApy              Float    @map("to_apy")
+  gasCost            Float    @map("gas_cost")
+  annualIncomeChange Float    @map("annual_income_change")
+
+  @@map("portfolio_rebalance")
+}
+
+/// ─────── TRANSACTION LOG ───────
+
+model PortfolioTransaction {
+  id                String             @id @default(dbgenerated("uuid_generate_v4()"))
+  walletAddress     String             @map("wallet_address")
+  yieldOpportunityId String            @map("yield_opportunity_id")
+  direction         PortfolioDirection
+  amount            Decimal                       // underlying token (USDC)
+  onChainDelta      Decimal?  @map("on_chain_delta") // signed Δ in aToken (only CORRECTION)
+  usdValue          Decimal?  @map("usd_value")
+  txHash            String             @unique @map("tx_hash")
+  executedAt        DateTime           @map("executed_at")
+
+  yieldOpportunity  YieldOpportunity   @relation(fields: [yieldOpportunityId], references: [id])
+
+  @@index([walletAddress])
+  @@map("portfolio_transaction")
+}
+
+enum PortfolioDirection {
+  ENTER
+  EXIT
+  CORRECTION
+}

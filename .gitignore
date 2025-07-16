@@ -62,3 +62,13 @@ yarn-error.log*
 
 # Turbo
 .turbo
+
+# Gemini
+.gemini
+
+#supabase temp
+supabase/.temp
+
+#prisma generated
+packages/database/generated
+apps/frontend/prisma/
