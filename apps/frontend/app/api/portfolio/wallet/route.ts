@@ -20,11 +20,6 @@ export interface WalletTokensApiResponse {
 }
 
 // StakeKit API types
-interface StakeKitToken {
-	network: string;
-	tokenAddress?: string;
-}
-
 interface StakeKitBalance {
 	token: {
 		network: string;
@@ -40,9 +35,9 @@ interface StakeKitBalance {
 interface PriceRequestToken {
 	network: string;
 	symbol: string;
-	name: string;
 	decimals: number;
 	address?: string;
+	name: string;
 }
 
 interface PriceResponse {
@@ -55,8 +50,6 @@ interface PriceResponse {
 // Requires process.env.STAKEKIT_API_KEY
 const SUPPORTED_CHAINS = ["ethereum", "polygon", "base", "arbitrum", "optimism"] as const;
 
-type SupportedChain = (typeof SUPPORTED_CHAINS)[number];
-
 const STAKEKIT_API = "https://api.stakek.it/v1/tokens/balances";
 const STAKEKIT_PRICES_API = "https://api.stakek.it/v1/tokens/prices";
 const DEFAULT_LOGO = "/placeholder-token.svg";
@@ -65,16 +58,10 @@ function isValidAddress(addr: string): addr is `0x${string}` {
 	return /^0x[a-fA-F0-9]{40}$/.test(addr);
 }
 
-function isSupportedChain(chain: string): chain is SupportedChain {
-	return SUPPORTED_CHAINS.includes(chain as SupportedChain);
-}
-
 async function fetchTokenPrices(tokens: PriceRequestToken[]): Promise<PriceResponse> {
 	if (tokens.length === 0) {
 		return {};
 	}
-
-	console.log("Tokens being sent for price fetching:", tokens);
 
 	try {
 		const response = await fetch(STAKEKIT_PRICES_API, {
@@ -137,6 +124,7 @@ export async function GET(req: NextRequest) {
 			distinct: ["network", "tokenAddress"],
 		});
 	} catch (e) {
+		console.error(e);
 		return NextResponse.json({ error: "DB error", testId: "wallet-error-db" }, { status: 500 });
 	}
 
@@ -146,18 +134,6 @@ export async function GET(req: NextRequest) {
 		tokenAddress: t.tokenAddress!,
 	}));
 	const addresses = [...nativeTokenRequests, ...erc20Requests];
-
-	// Build StakeKit request body for balances
-	const skReq = {
-		wallet,
-		tokens: addresses.map((t) => {
-			const baseToken = { network: t.network };
-			if ("tokenAddress" in t && t.tokenAddress) {
-				return { ...baseToken, tokenAddress: t.tokenAddress };
-			}
-			return baseToken;
-		}),
-	};
 
 	// Call StakeKit for balances
 	let skRes;
@@ -185,6 +161,7 @@ export async function GET(req: NextRequest) {
 			return NextResponse.json({ error: "StakeKit API error", testId: "wallet-error-stakekit" }, { status: 502 });
 		}
 	} catch (e) {
+		console.error(e);
 		return NextResponse.json({ error: "Failed to fetch from StakeKit", testId: "wallet-error-fetch" }, { status: 502 });
 	}
 
@@ -192,6 +169,7 @@ export async function GET(req: NextRequest) {
 	try {
 		skData = await skRes.json();
 	} catch (e) {
+		console.error(e);
 		return NextResponse.json(
 			{
 				error: "Invalid StakeKit response",
@@ -209,8 +187,8 @@ export async function GET(req: NextRequest) {
 		const token: PriceRequestToken = {
 			network: t.token.network,
 			symbol: t.token.symbol,
-			name: t.token.name || t.token.symbol,
 			decimals: t.token.decimals || 18,
+			name: t.token.name || t.token.symbol,
 		};
 		if (t.token.address && t.token.address !== "") {
 			token.address = t.token.address;
@@ -227,8 +205,6 @@ export async function GET(req: NextRequest) {
 		const meta = tokens.find((meta) => meta.network === chain && (meta.tokenAddress || "").toLowerCase() === (t.token?.address || "").toLowerCase());
 
 		const symbol = t.token?.symbol || meta?.tokenSymbol || "";
-		const decimals = t.token?.decimals || 18;
-		const name = t.token?.name || symbol;
 		const address = t.token?.address || "";
 
 		// Create price key

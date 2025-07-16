@@ -2,8 +2,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+
+// Define WalletToken type for allTokens and use it instead of 'any' or 'unknown'.
+// Replace all (token as any) with proper type assertion or destructuring.
+type WalletToken = {
+	symbol: string;
+	network: string;
+	amount: string;
+	price: number;
+	amountUSD: number;
+	logoURI?: string;
+	name?: string;
+};
 
 export default function WalletPortfolio() {
 	const { address: wallet } = useAccount();
@@ -25,7 +37,7 @@ export default function WalletPortfolio() {
 	}
 
 	// Use the tokens directly from the API response
-	const allTokens = data?.tokens || [];
+	const allTokens: WalletToken[] = data?.tokens || [];
 
 	return (
 		<div className="space-y-6">
@@ -35,7 +47,7 @@ export default function WalletPortfolio() {
 					<CardContent>
 						{isLoading && null /* Loading is handled at page level */}
 
-						{error && <div className="text-red-500 text-center py-4">{(error as any).message}</div>}
+						{error && <div className="text-red-500 text-center py-4">{(error as unknown as { message?: string }).message}</div>}
 
 						{!isLoading && !error && allTokens.length === 0 && (
 							<div className="text-center py-8">
@@ -56,7 +68,7 @@ export default function WalletPortfolio() {
 										</tr>
 									</thead>
 									<tbody>
-										{allTokens.map((token: any, index: number) => {
+										{allTokens.map((token: WalletToken, index: number) => {
 											const amount = parseFloat(token.amount);
 
 											return (

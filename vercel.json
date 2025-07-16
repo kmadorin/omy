@@ -1,0 +1,6 @@
+{
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"rootDirectory": "apps/frontend",
+	"buildCommand": "pnpm --filter @omy/database generate && pnpm run build",
+	"outputDirectory": ".next"
+}

@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface WalletToken {
 	symbol: string;
@@ -29,12 +30,7 @@ export default function WalletTokensRow({ chain, tokens }: WalletTokensRowProps)
 					if (!isNaN(num)) shortAmount = num.toPrecision(4);
 					return (
 						<div key={token.symbol + i} className="flex flex-col items-center min-w-[72px] bg-white rounded shadow p-2">
-							<img
-								src={token.logoURI || DEFAULT_LOGO}
-								alt={token.symbol}
-								className="w-8 h-8 mb-1 object-contain bg-gray-100 rounded-full"
-								onError={(e) => (e.currentTarget.src = DEFAULT_LOGO)}
-							/>
+							<Image src={token.logoURI || DEFAULT_LOGO} alt={token.symbol} width={32} height={32} className="w-8 h-8 rounded-full" />
 							<div className="text-xs font-medium">{token.symbol}</div>
 							<div className="text-xs text-gray-500 truncate max-w-[60px]" title={token.amount}>
 								{shortAmount}
