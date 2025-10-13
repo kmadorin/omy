@@ -31,19 +31,33 @@ export default async function RootLayout({
   const config = getConfig();
   const headersList = await headers();
   const initialState = cookieToInitialState(config, headersList.get("cookie"));
+  const pathname = headersList.get("x-pathname") || "";
+  const isReportPage = pathname === "/report";
 
   return (
     <html lang="en">
+      <head>
+        {isReportPage && (
+          <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+            rel="stylesheet"
+          />
+        )}
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen bg-orange-500 flex flex-col">
-          <Providers initialState={initialState}>
-            <Header />
-            <main className="container mx-auto flex-1 py-6">{children}</main>
-            <Toaster />
-          </Providers>
-        </div>
+        {isReportPage ? (
+          children
+        ) : (
+          <div className="min-h-screen bg-orange-500 flex flex-col">
+            <Providers initialState={initialState}>
+              <Header />
+              <main className="container mx-auto flex-1 py-6">{children}</main>
+              <Toaster />
+            </Providers>
+          </div>
+        )}
       </body>
     </html>
   );
