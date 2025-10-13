@@ -1,6 +1,4 @@
-# OhMyYield (OMY) - DeFi Portfolio Management Platform
-
-A comprehensive monorepo containing a DeFi portfolio management platform with AI-powered yield optimization, built with a modern stack including Python LangGraph agents, Next.js frontend, and automated data collection services.
+# OhMyYield (OMY) - Perplexity like app for searching DEFI yields and portfolio management
 
 ## 🏗️ Architecture
 
